@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <style>
+    .chatArea {
+      max-width: 600px;
+      margin: auto;
+      font-family: Arial, sans-serif;
+    }
+
+    .message {
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .message.left {
+      justify-content: flex-start;
+    }
+
+    .message.right {
+      justify-content: flex-end;
+    }
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: 0 10px;
+    }
+
+    .content p {
+      max-width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      word-wrap: break-word;
+      line-height: 1.4;
+    }
+
+    .message.left .content p {
+      background-color: #f0f0f0;
+      color: #000;
+      border-radius: 20px 20px 20px 0;
+    }
+
+    .message.right .content p {
+      background-color: #dcf8c6;
+      color: #000;
+      border-radius: 20px 20px 0 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="chatArea">
+  <div class="message left">
+    <img src="https://himg.bdimg.com/sys/portrait/item/public.1.e5fd5b06.SwkuEoIYimvKEaparuasng.jpg" alt="avatar" class="avatar">
+    <div class="content">
+      <p>你好，世界！</p>
+    </div>
+  </div>
+  <div class="message right">
+
+    <div class="content">
+      <p>你好！很高兴见到你。</p>
+    </div>
+    <img src="https://himg.bdimg.com/sys/portrait/item/public.1.e5fd5b06.SwkuEoIYimvKEaparuasng.jpg" alt="avatar" class="avatar">
+  </div>
+</div>
+</body>
+</html>

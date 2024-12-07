@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <style>
+    .tip {
+            float: none; width: 100%; height: 80px;
+    }
+    .num {
+            float: left;
+    }
+    .rightArea {
+            float: left; height: 80px;
+    }
+    .avatar {
+            float: left;
+            width: 40px; /* 或者你想要的头像大小 */
+            height: 40px; /* 宽高相同以形成完美的圆形 */
+            border: 1px #000000 solid;
+            border-radius: 5px;
+            object-fit: scale-down; /* 确保图片填充整个容器，并且超出的部分会被剪裁掉 */
+            background-position: center; /* 背景图片居中 */
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8); /* 阴影效果 */
+            background-size: 100% 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="rank">
+    <div v-for="item in randlist" class="tip">
+        <div class="avatar" :style="{ backgroundImage: `url(${item.userface})` }"></div>
+        <div class="rightArea">
+            <div class="score good">{{ item.score }}积分</div>
+            <div class="username">{{ item.userName }}</div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    const { createApp, ref } = Vue;
+
+    const app = createApp({
+      setup() {
+        const randlist = ref([]);
+
+        // 暴露 randlist 以便外部访问
+        app.config.globalProperties.$randlist = randlist;
+
+        return {
+          randlist
+        };
+      }
+    });
+    const vm = app.mount('#rank');
+
+    vm.$randlist.value = [{"userName": "\u7a0b\u5e8f\u733f\u7684\u9000\u4f11\u751f\u6d3b", "userface": "https://i1.hdslb.com/bfs/face/d5addd247a6c2b2c3ed7b25d439c13f02505fac1.jpg", "score": 5555}, {"userName": "winlone", "userface": "http://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280", "score": 243}, {"userName": "\u5c0f\u5929\u4f7f", "userface": "http://gips3.baidu.com/it/u=3886271102,3123389489&fm=3028&app=3028&f=JPEG&fmt=auto?w=1280&h=960", "score": 300}];
+
+  </script>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="utf-8">
+    <title>OBS配置</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ai吟美管理后台">
+    <meta name="author" content="程序猿的退休生活">
+
+    <!-- The styles -->
+    <link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+
+    <link href="css/charisma-app.css" rel="stylesheet">
+    <link href='bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='css/jquery.noty.css' rel='stylesheet'>
+    <link href='css/noty_theme_default.css' rel='stylesheet'>
+    <link href='css/elfinder.min.css' rel='stylesheet'>
+    <link href='css/elfinder.theme.css' rel='stylesheet'>
+    <link href='css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href='css/uploadify.css' rel='stylesheet'>
+    <link href='css/animate.min.css' rel='stylesheet'>
+    <link href='css/extend.css' rel='stylesheet'>
+    <!-- jQuery -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <!--jbox-->
+    <link id="skin" rel="stylesheet" href="bower_components/jBox/Skins/Red/jbox.css" />
+    <script type="text/javascript" src="bower_components/jBox/jquery.jBox-2.3.min.js"></script>
+    <script type="text/javascript" src="bower_components/jBox/i18n/jquery.jBox-zh-CN.js"></script>
+    <!--vue-->
+    <script src="js/vue.3.5.13.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="config.js"></script>
+    <!-- The fav icon -->
+    <link rel="shortcut icon" href="img/favicon.ico">
+
+    <script type="text/javascript">
+        async function loadMenu() {
+            const response = await fetch('menu.html', {cache: 'force-cache'});
+            const menuHtml = await response.text();
+            document.getElementById('menu').innerHTML = menuHtml;
+        }
+
+        async function loadFooter() {
+            const response = await fetch('footer.html', {cache: 'force-cache'});
+            const footerHtml = await response.text();
+            document.getElementById('footer').innerHTML = footerHtml;
+        }
+
+        async function loadTopbar() {
+            const response = await fetch('topbar.html', {cache: 'force-cache'});
+            const topbarHtml = await response.text();
+            document.getElementById('topbar').innerHTML = topbarHtml;
+
+            // 菜单加载完成后，加载其他JavaScript文件
+            const script = document.createElement('script');
+            script.src = 'js/charisma.js';
+            document.head.appendChild(script);
+        }
+
+        // DOMContentLoaded 事件确保 DOM 已经加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+            loadTopbar();
+            loadFooter();
+        });
+    </script>
+</head>
+
+<body>
+<!-- topbar starts -->
+<div id="topbar"></div>
+<!-- topbar ends -->
+<div class="ch-container">
+    <div class="row">
+
+        <!-- left menu starts -->
+        <div id="menu"></div>
+        <!-- left menu ends -->
+
+
+        <div id="content" class="col-lg-10 col-sm-10">
+            <!-- content starts -->
+            <div>
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="obs.html">OBS配置</a>
+                    </li>
+                </ul>
+            </div>
+
+            <form @submit.prevent="handleSubmit">
+            <div class="row">
+                <div class="box col-md-12">
+                    <div class="box-inner">
+                        <div class="box-header well" data-original-title="">
+                            <h2><i class="glyphicon glyphicon-edit"></i> OBS配置</h2>
+
+                            <div class="box-icon">
+                                <a href="#" class="btn btn-setting btn-round btn-default"><i
+                                        class="glyphicon glyphicon-cog"></i></a>
+                                <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                                        class="glyphicon glyphicon-chevron-up"></i></a>
+                                <a href="#" class="btn btn-close btn-round btn-default"><i
+                                        class="glyphicon glyphicon-remove"></i></a>
+                            </div>
+                        </div>
+                        <div class="box-content">
+                            <br/>
+                            <span class="title">OBS配置<span class="tip" data-toggle="tooltip" title="连接OBS直播软件的联动功能"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="obs.switch">开关</label>
+                                    <input id="obs.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.obs_switch">
+                                </div>
+
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="obs.url">OBS服务地址</label><span class="tip" data-toggle="tooltip" title="此连接是OBS直播软件的ws插件服务websocket连接"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="obs.url" placeholder="OBS服务地址" v-model="info.obs_url">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="obs.port">OBS服务端口</label>
+                                    <input type="text" class="form-control" id="obs.port" placeholder="OBS服务端口" v-model="info.obs_port">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="obs.password">密码</label>
+                                    <input type="text" class="form-control" id="obs.password" placeholder="密码" v-model="info.obs_password">
+                                </div>
+                            </div>
+                            <div class="line">
+                                <div class="form-group position" style="width: 600px;">
+                                    <label for="obs.song_background">背景音乐路径</label>
+                                    <input type="text" class="form-control" id="obs.song_background" placeholder="OBS场景的背景音乐路径，支持数组多个配置" v-model="info.song_background">
+                                </div>
+                            </div>
+
+                            <span class="title">跳舞<span class="tip" data-toggle="tooltip" title="跳舞视频地址配置"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="dance.switch">开关</label>
+                                    <input id="dance.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.dance_switch">
+                                </div>
+
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="dance.dance_path">跳舞视频路径</label><span class="tip" data-toggle="tooltip" title="填入视频存放的文件夹路径，支持子文件夹扫描"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="dance.dance_path" placeholder="跳舞视频路径" v-model="info.dance_path">
+                                </div>
+                            </div>
+
+                            <span class="title">表情<span class="tip" data-toggle="tooltip" title="表情视频地址配置"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="emote.switch">开关</label>
+                                    <input id="emote.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.emote_switch">
+                                </div>
+
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="emote.emote_path">表情视频路径</label><span class="tip" data-toggle="tooltip" title="填入视频存放的文件夹路径，支持子文件夹扫描"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="emote.emote_path" placeholder="表情视频路径" v-model="info.emote_path">
+                                </div>
+                            </div>
+
+                            <div class="line">
+                                <button id="save" type="submit" class="btn btn-default" title="保存配置后不会立马生效，需要点击重启应用按钮才会生效" data-toggle="tooltip">保存配置</button>
+                                &nbsp;
+                                <button id="cancel" type="button" class="btn btn-default" @click="refreshPage">取消</button>
+                                &nbsp;
+                                <button id="restart" type="button" class="btn btn-warning" title="重启应用会重新加载配置，中途会有短暂中断" data-toggle="tooltip" @click="restart">重启应用</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/span-->
+
+            </div><!--/row-->
+            </form>
+            <!-- content ends -->
+        </div><!--/#content.col-md-0-->
+    </div><!--/fluid-row-->
+
+    <div class="modal fade" id="tipModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body">
+                    Here settings can be configured...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <!-- 底部 -->
+    <div id="footer"></div>
+    <!-- end -->
+
+</div><!--/.fluid-container-->
+
+<!-- external javascript -->
+
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- library for cookie management -->
+<script src="js/jquery.cookie.js"></script>
+<!-- calender plugin -->
+<script src='bower_components/moment/min/moment.min.js'></script>
+<script src='bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
+<!-- data table plugin -->
+<script src='js/jquery.dataTables.min.js'></script>
+
+<!-- select or dropdown enhancer -->
+<script src="bower_components/chosen/chosen.jquery.min.js"></script>
+<!-- plugin for gallery image view -->
+<script src="bower_components/colorbox/jquery.colorbox-min.js"></script>
+<!-- notification plugin -->
+<script src="js/jquery.noty.js"></script>
+<!-- library for making tables responsive -->
+<script src="bower_components/responsive-tables/responsive-tables.js"></script>
+<!-- tour plugin -->
+<script src="bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+<!-- star rating plugin -->
+<script src="js/jquery.raty.min.js"></script>
+<!-- for iOS style toggle switch -->
+<script src="js/jquery.iphone.toggle.js"></script>
+<!-- autogrowing textarea plugin -->
+<script src="js/jquery.autogrow-textarea.js"></script>
+<!-- multiple file upload plugin -->
+<script src="js/jquery.uploadify-3.1.min.js"></script>
+<!-- history.js for cross-browser state change on ajax -->
+<script src="js/jquery.history.js"></script>
+<!-- application script for Charisma demo -->
+<!--<script src="js/charisma.js"></script>-->
+
+<script>
+    const { createApp, reactive, onMounted } = Vue;
+
+    const app = createApp({
+        methods: {
+            refreshPage() {
+                location.reload();
+            },
+            async restart() {
+                axios.post(window.AppConfig.apiUrl+'/restart', {timeout: 500});
+            },
+            tipClick(event){
+                //console.log('Event Object:', event);
+                console.log('Event Target:', event.currentTarget);
+                const buttonId = event.currentTarget.getAttribute('id');
+                console.log(buttonId);
+                const buttonAlt = event.currentTarget.getAttribute('alt');
+                console.log(buttonAlt);
+                $('.modal-body').text(buttonAlt)
+                $('#tipModal').modal('show');
+            }
+        },
+        setup() {
+            const info = reactive({});
+
+            const fetchUserInfo = async () => {
+                try {
+                    const inputNames = Array.from(document.querySelectorAll('#content input')).map(input => input.id);
+
+                    console.log(inputNames);
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/read_yml', inputNames);
+                    console.log(response.data);
+
+                    // 更新 Vue 的响应式数据
+                    Object.assign(info, {
+                        obs_switch: response.data["obs.switch"],
+                        obs_url: response.data["obs.url"],
+                        obs_port: Number(response.data["obs.port"]),
+                        obs_password: response.data["obs.password"],
+                        song_background: JSON.stringify(response.data["obs.song_background"]),
+
+                        dance_switch: response.data["dance.switch"],
+                        dance_path: response.data["dance.dance_path"],
+
+                        emote_switch: response.data["emote.switch"],
+                        emote_path: response.data["emote.emote_path"],
+
+                    });
+
+                } catch (error) {
+                    console.error('Failed to fetch user info:', error);
+                }
+            };
+
+            onMounted(() => {
+                fetchUserInfo();
+            });
+
+            const handleSubmit = async () => {
+                try {
+                    info.obs_switch = $("#obs\\.switch").is(':checked');
+                    song_background = JSON.parse($("#obs\\.song_background").val());
+                    info.dance_switch = $("#dance\\.switch").is(':checked');
+                    info.emote_switch = $("#emote\\.switch").is(':checked');
+
+                    let postData = {
+                        "obs.switch": info.obs_switch,
+                        "obs.url": info.obs_url,
+                        "obs.port": Number(info.obs_port),
+                        "obs.password": info.obs_password,
+                        "obs.song_background": song_background,
+
+                        "dance.switch": info.dance_switch,
+                        "dance.dance_path": info.dance_path,
+
+                        "emote.switch": info.emote_switch,
+                        "emote.emote_path": info.emote_path,
+
+                    };
+                    console.log(postData);
+                    // 发送 POST 请求到后端 API
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/write_yml', postData, headers={'Content-Type': 'application/json'});
+                    console.log('更新信息', response.data);
+                    if(response.data["status"]=="成功") {
+                        $.jBox.tip('更新成功', 'success');
+                    }
+                    // 这里可以添加更多逻辑，比如重定向到另一个页面
+                } catch (error) {
+                    $.jBox.tip('更新失败', 'error');
+                    console.error('更新失败', error);
+                }
+            };
+
+            return {
+                info,
+                handleSubmit
+            };
+        }
+    }).mount('#content');
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue2.6.14.min.js"></script>
+    <script type="text/javascript" src="jquery-3.7.1.min.js"></script>
+    <style>
+        .num {
+            width: 20px; height: 100px; float: left;
+            font-size: 40px; font-weight: bold; color: #FFFFFF; padding: 10px 15px 10px 15px;
+            text-stroke: 1px #; line-height: 100px; text-align: center;
+        }
+        .avatar {
+            float: left;
+            width: 100px; /* 或者你想要的头像大小 */
+            height: 100px; /* 宽高相同以形成完美的圆形 */
+            border-radius: 15px; /* 将头像设为圆形 */
+            object-fit: scale-down; /* 确保图片填充整个容器，并且超出的部分会被剪裁掉 */
+            background-position: center; /* 背景图片居中 */
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8); /* 阴影效果 */
+            background-size: 100% 100%;
+            margin: 10px;
+        }
+
+        .rightArea {
+            float: left; width: auto;  height: 100px;
+        }
+
+        .score, .username {
+            font-weight: bold;
+            font-family: 微软雅黑;
+            width: auto;
+            padding-left: 20px;
+            text-shadow: 2px 2px 2px #000000;
+        }
+
+        .score {
+            font-size: 35px;
+            color: #FFFFFF;
+            height: 70px;
+            line-height: 70px;
+        }
+        .score.good{
+            color: #ffe13a;
+        }
+
+        .username {
+            font-size: 25px;
+            color: #FFFFFF;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .tip {
+            width: 600px; height: 120px; float: none;
+            border: 1px #000000 solid;
+            border-radius: 15px;
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8); /* 阴影效果 */
+            margin-bottom: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        #rank {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="rank">
+    <div v-for="(item,index) in randlist" class="tip">
+        <div class="num">{{index+1}}</div>
+        <div class="avatar" :style="'background-image: url('+item.userface+')'"></div>
+        <div class="rightArea">
+            <div class="score good">{{item.score}}积分</div>
+            <div class="username">{{item.username}}</div>
+        </div>
+    </div>
+</div>
+<script>
+    var vm = new Vue({
+            el: '#rank',
+            data: {
+                randlist: []
+            },
+            methods: {
+                loadData(jsonstr) {
+                    randlist = jsonstr
+                }
+            }
+
+    })
+    let ws
+    function connect() {
+        ws = new WebSocket("ws://localhost:18765");
+        ws.onopen = function () {
+            console.log("Connected!");
+        };
+        ws.onmessage = function (event) {
+            console.log("Received message:", event.data);
+            jsonstr = JSON.parse(event.data);
+            if (jsonstr["type"] != "排行榜")
+                return;
+            vm.$set(vm, "randlist", jsonstr["data"]);
+            $("#rank").css("display", "block");
+            // 等待秒后隐藏
+            setTimeout(function () {
+                $("#rank").css("display", "none");
+            }, 35000);
+        }
+        ws.onclose = function (event) {
+            console.log('WebSocket连接已关闭');
+            setTimeout(reconnect, 5000);
+        };
+    }
+
+    function reconnect() {
+        if (ws !== null && (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING)) {
+            console.log("尝试重连WebSocket...");
+            connect();
+        }
+    }
+
+    // 初始化连接
+    connect();
+
+</script>
+</body>
+</html>

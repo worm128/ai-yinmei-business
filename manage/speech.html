@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="utf-8">
+    <title>语音</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ai吟美管理后台">
+    <meta name="author" content="程序猿的退休生活">
+
+    <!-- The styles -->
+    <link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+
+    <link href="css/charisma-app.css" rel="stylesheet">
+    <link href='bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='css/jquery.noty.css' rel='stylesheet'>
+    <link href='css/noty_theme_default.css' rel='stylesheet'>
+    <link href='css/elfinder.min.css' rel='stylesheet'>
+    <link href='css/elfinder.theme.css' rel='stylesheet'>
+    <link href='css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href='css/uploadify.css' rel='stylesheet'>
+    <link href='css/animate.min.css' rel='stylesheet'>
+    <link href='css/extend.css' rel='stylesheet'>
+    <!-- jQuery -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <!--jbox-->
+    <link id="skin" rel="stylesheet" href="bower_components/jBox/Skins/Red/jbox.css" />
+    <script type="text/javascript" src="bower_components/jBox/jquery.jBox-2.3.min.js"></script>
+    <script type="text/javascript" src="bower_components/jBox/i18n/jquery.jBox-zh-CN.js"></script>
+    <!--vue-->
+    <script src="js/vue.3.5.13.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="config.js"></script>
+    <!-- The fav icon -->
+    <link rel="shortcut icon" href="img/favicon.ico">
+
+    <script type="text/javascript">
+        async function loadMenu() {
+            const response = await fetch('menu.html', {cache: 'force-cache'});
+            const menuHtml = await response.text();
+            document.getElementById('menu').innerHTML = menuHtml;
+        }
+
+        async function loadFooter() {
+            const response = await fetch('footer.html', {cache: 'force-cache'});
+            const footerHtml = await response.text();
+            document.getElementById('footer').innerHTML = footerHtml;
+        }
+
+        async function loadTopbar() {
+            const response = await fetch('topbar.html', {cache: 'force-cache'});
+            const topbarHtml = await response.text();
+            document.getElementById('topbar').innerHTML = topbarHtml;
+
+            // 菜单加载完成后，加载其他JavaScript文件
+            const script = document.createElement('script');
+            script.src = 'js/charisma.js';
+            document.head.appendChild(script);
+        }
+
+        // DOMContentLoaded 事件确保 DOM 已经加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+            loadTopbar();
+            loadFooter();
+        });
+    </script>
+</head>
+
+<body>
+<!-- topbar starts -->
+<div id="topbar"></div>
+<!-- topbar ends -->
+<div class="ch-container">
+    <div class="row">
+
+        <!-- left menu starts -->
+        <div id="menu"></div>
+        <!-- left menu ends -->
+
+
+        <div id="content" class="col-lg-10 col-sm-10">
+            <!-- content starts -->
+            <div>
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="speech.html">语音</a>
+                    </li>
+                </ul>
+            </div>
+
+            <form @submit.prevent="handleSubmit">
+            <div class="row">
+                <div class="box col-md-12">
+                    <div class="box-inner">
+                        <div class="box-header well" data-original-title="">
+                            <h2><i class="glyphicon glyphicon-edit"></i> 主人物语音</h2>
+
+                            <div class="box-icon">
+                                <a href="#" class="btn btn-setting btn-round btn-default"><i
+                                        class="glyphicon glyphicon-cog"></i></a>
+                                <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                                        class="glyphicon glyphicon-chevron-up"></i></a>
+                                <a href="#" class="btn btn-close btn-round btn-default"><i
+                                        class="glyphicon glyphicon-remove"></i></a>
+                            </div>
+                        </div>
+                        <div class="box-content">
+                            <br/>
+                            <span class="title">主人物语音配置</span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="speech.switch">开关</label>
+                                    <input id="speech.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.speech_switch">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="speech.select">语音选择</label><br>
+                                    <select id="speech.select" data-rel="chosen" v-model="info.speech_select">
+                                        <option value="gpt-sovits">gpt-sovits v1和v2</option>
+                                        <option value="edge-tts">微软edge-tts</option>
+                                        <option value="bert-vists">bert-vists</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group position" style="width: 120px">
+                                    <label for="speech.speech_max_threads">合成线程数</label><span class="tip" title="线程数越大，需要耗费GPU资源越大，建议设置3~5" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input id="speech.speech_max_threads" type="text" class="form-control" placeholder="建议设置3~5" v-model="info.speech_max_threads">
+                                </div>
+                            </div>
+
+                            <span class="title">gpt-sovits<span class="tip" data-toggle="tooltip" title="gpt-sovits兼容1和2版本"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position" style="width: 200px;">
+                                    <label for="speech.gpt-sovits.gtp_vists_url">gpt-sovits服务地址</label>
+                                    <input id="speech.gpt-sovits.gtp_vists_url" type="text" class="form-control" placeholder="gtp-vists服务http://地址:端口" v-model="info.gtp_vists_url">
+                                </div>
+                                <div class="form-group position" style="width: 80px;">
+                                    <label for="speech.gpt-sovits.temperature">温度</label><span class="tip" title="温度越大越热情，默认0.6" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="speech.gpt-sovits.temperature" placeholder="默认0.6" v-model="info.gtp_vists_temperature">
+                                </div>
+                                <div class="form-group position" style="width: 80px;">
+                                    <label for="speech.gpt-sovits.speed">语速</label><span class="tip" title="说话速度，值越大说话速度越快，默认1.2" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="speech.gpt-sovits.speed" placeholder="默认1.2" v-model="info.gtp_vists_speed">
+                                </div>
+                            </div>
+
+                            <span class="title">bert-vists</span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="speech.bert-vists.bert_vists_url">bert-vists服务地址</label>
+                                    <input type="text" class="form-control" id="speech.bert-vists.bert_vists_url" placeholder="bert-vists服务地址" v-model="info.bert_vists_url">
+                                </div>
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="speech.bert-vists.speaker_name">说话人语音</label>
+                                    <input type="text" class="form-control" id="speech.bert-vists.speaker_name" placeholder="说话人语音" v-model="info.bert_vists_speaker_name">
+                                </div>
+                                <div class="form-group position" style="width: 80px;">
+                                    <label for="speech.bert-vists.sdp_ratio">SDP</label><span class="tip" title="SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="speech.bert-vists.sdp_ratio" placeholder="默认0.2" v-model="info.bert_vists_sdp_ratio">
+                                </div>
+                                <div class="form-group position" style="width: 80px;">
+                                    <label for="speech.bert-vists.noise">感情变化</label><span class="tip" title="控制感情变化程度，默认0.2" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="speech.bert-vists.noise" placeholder="默认0.2" v-model="info.bert_vists_noise">
+                                </div>
+                                <div class="form-group position" style="width: 80px;">
+                                    <label for="speech.bert-vists.noisew">音节发音</label><span class="tip" title="控制音节发音变化程度，默认0.9" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="speech.bert-vists.noisew" placeholder="默认0.9" v-model="info.bert_vists_noisew">
+                                </div>
+                                <div class="form-group position" style="width: 80px;">
+                                    <label for="speech.bert-vists.speed">语速</label><span class="tip" title="语速0~2,越大越快" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="speech.bert-vists.speed" placeholder="默认1" v-model="info.bert_vists_speed">
+                                </div>
+                            </div>
+
+                            <span class="title">微软edge-tts</span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="speech.edge-tts.speaker_name">人物选择</label><span class="tip" @click="tipClick"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="speech.edge-tts.speaker_name" placeholder="edge-tts服务地址" v-model="info.edge_tts_speaker_name">
+                                </div>
+                            </div>
+
+                            <div class="line">
+                                <button id="save" type="submit" class="btn btn-default" title="保存配置后不会立马生效，需要点击重启应用按钮才会生效" data-toggle="tooltip">保存配置</button>
+                                &nbsp;
+                                <button id="cancel" type="button" class="btn btn-default" @click="refreshPage">取消</button>
+                                &nbsp;
+                                <button id="restart" type="button" class="btn btn-warning" title="重启应用会重新加载配置，中途会有短暂中断" data-toggle="tooltip" @click="restart">重启应用</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/span-->
+
+            </div><!--/row-->
+
+            <div class="row">
+                    <div class="box col-md-12">
+                        <div class="box-inner">
+                            <div class="box-header well" data-original-title="">
+                                <h2><i class="glyphicon glyphicon-edit"></i> 助手语音</h2>
+
+                                <div class="box-icon">
+                                    <a href="#" class="btn btn-setting btn-round btn-default"><i
+                                            class="glyphicon glyphicon-cog"></i></a>
+                                    <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                                            class="glyphicon glyphicon-chevron-up"></i></a>
+                                    <a href="#" class="btn btn-close btn-round btn-default"><i
+                                            class="glyphicon glyphicon-remove"></i></a>
+                                </div>
+                            </div>
+                            <div class="box-content">
+                                <br/>
+                                <span class="title">助手语音配置</span>
+                                <hr>
+                                <div class="line">
+                                    <div class="form-group position">
+                                        <label for="assistant.switch">开关</label>
+                                        <input id="assistant.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.assistant_switch">
+                                    </div>
+
+                                    <div class="form-group position">
+                                        <label for="assistant.select">语音选择</label><br>
+                                        <select id="assistant.select" data-rel="chosen" v-model="info.assistant_select">
+                                            <option value="gpt-sovits">gpt-sovits v1和v2</option>
+                                            <option value="edge-tts">微软edge-tts</option>
+                                            <option value="bert-vists">bert-vists</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <span class="title">gpt-sovits<span class="tip" data-toggle="tooltip" title="gpt-sovits兼容1和2版本"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                                <hr>
+                                <div class="line">
+                                    <div class="form-group position" style="width: 200px;">
+                                        <label for="assistant.gpt-sovits.gtp_vists_url">gpt-sovits服务地址</label>
+                                        <input id="assistant.gpt-sovits.gtp_vists_url" type="text" class="form-control"
+                                               placeholder="gtp-vists服务http://地址:端口" v-model="info.assistant_gtp_vists_url">
+                                    </div>
+                                    <div class="form-group position" style="width: 80px;">
+                                        <label for="assistant.gpt-sovits.temperature">温度</label><span class="tip"
+                                                                                                     title="温度越大越热情，默认0.6"
+                                                                                                     data-toggle="tooltip"><i
+                                            class="glyphicon glyphicon-question-sign"></i></span>
+                                        <input type="text" class="form-control" id="assistant.gpt-sovits.temperature"
+                                               placeholder="默认0.6" v-model="info.assistant_gtp_vists_temperature">
+                                    </div>
+                                    <div class="form-group position" style="width: 80px;">
+                                        <label for="assistant.gpt-sovits.speed">语速</label><span class="tip"
+                                                                                               title="说话速度，值越大说话速度越快，默认1.2"
+                                                                                               data-toggle="tooltip"><i
+                                            class="glyphicon glyphicon-question-sign"></i></span>
+                                        <input type="text" class="form-control" id="assistant.gpt-sovits.speed"
+                                               placeholder="默认1.2" v-model="info.assistant_gtp_vists_speed">
+                                    </div>
+                                </div>
+
+                                <span class="title">bert-vists</span>
+                                <hr>
+                                <div class="line">
+                                    <div class="form-group position" style="width: 300px;">
+                                        <label for="assistant.bert-vists.bert_vists_url">bert-vists服务地址</label>
+                                        <input type="text" class="form-control" id="assistant.bert-vists.bert_vists_url"
+                                               placeholder="bert-vists服务地址" v-model="info.assistant_bert_vists_url">
+                                    </div>
+                                    <div class="form-group position" style="width: 300px;">
+                                        <label for="assistant.bert-vists.speaker_name">说话人语音</label>
+                                        <input type="text" class="form-control" id="assistant.bert-vists.speaker_name"
+                                               placeholder="说话人语音" v-model="info.assistant_bert_vists_speaker_name">
+                                    </div>
+                                    <div class="form-group position" style="width: 80px;">
+                                        <label for="assistant.bert-vists.sdp_ratio">SDP</label><span class="tip"
+                                                                                                  title="SDP在合成时的占比，理论上此比率越高，合成的语音语调方差越大"
+                                                                                                  data-toggle="tooltip"><i
+                                            class="glyphicon glyphicon-question-sign"></i></span>
+                                        <input type="text" class="form-control" id="assistant.bert-vists.sdp_ratio"
+                                               placeholder="默认0.2" v-model="info.assistant_bert_vists_sdp_ratio">
+                                    </div>
+                                    <div class="form-group position" style="width: 80px;">
+                                        <label for="assistant.bert-vists.noise">感情变化</label><span class="tip" title="控制感情变化程度，默认0.2" data-toggle="tooltip"><i
+                                            class="glyphicon glyphicon-question-sign"></i></span>
+                                        <input type="text" class="form-control" id="assistant.bert-vists.noise"
+                                               placeholder="默认0.2" v-model="info.assistant_bert_vists_noise">
+                                    </div>
+                                    <div class="form-group position" style="width: 80px;">
+                                        <label for="assistant.bert-vists.noisew">音节发音</label><span class="tip" title="控制音节发音变化程度，默认0.9" data-toggle="tooltip"><i
+                                            class="glyphicon glyphicon-question-sign"></i></span>
+                                        <input type="text" class="form-control" id="assistant.bert-vists.noisew"
+                                               placeholder="默认0.9" v-model="info.assistant_bert_vists_noisew">
+                                    </div>
+                                    <div class="form-group position" style="width: 80px;">
+                                        <label for="assistant.bert-vists.speed">语速</label><span class="tip" title="语速0~2,越大越快" data-toggle="tooltip"><i
+                                            class="glyphicon glyphicon-question-sign"></i></span>
+                                        <input type="text" class="form-control" id="assistant.bert-vists.speed"
+                                               placeholder="默认1" v-model="info.assistant_bert_vists_speed">
+                                    </div>
+                                </div>
+
+                                <span class="title">微软edge-tts</span>
+                                <hr>
+                                <div class="line">
+                                    <div class="form-group position" style="width: 300px;">
+                                        <label for="assistant.edge-tts.speaker_name">人物选择</label><span class="tip"
+                                                                                                        @click="tipClick"><i
+                                            class="glyphicon glyphicon-question-sign"></i></span>
+                                        <input type="text" class="form-control" id="assistant.edge-tts.speaker_name"
+                                               placeholder="edge-tts服务地址" v-model="info.assistant_edge_tts_speaker_name">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--/span-->
+
+                </div>
+            </form>
+            <!-- content ends -->
+        </div><!--/#content.col-md-0-->
+    </div><!--/fluid-row-->
+
+    <div class="modal fade" id="tipModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>edge-tts的人物使用</h3>
+                </div>
+                <div class="modal-body">
+                    Name: zh-CN-XiaoxiaoNeural<br/>
+                    Gender: Female<br/>
+                    Name: zh-CN-XiaoyiNeural<br/>
+                    Gender: Female<br/>
+                    Name: zh-CN-YunjianNeural<br/>
+                    Gender: Male<br/>
+                    Name: zh-CN-YunxiNeural<br/>
+                    Gender: Male<br/>
+                    Name: zh-CN-YunxiaNeural<br/>
+                    Gender: Male<br/>
+                    Name: zh-CN-YunyangNeural<br/>
+                    Gender: Male<br/>
+                    Name: zh-CN-liaoning-XiaobeiNeural<br/>
+                    Gender: Female<br/>
+                    Name: zh-CN-shaanxi-XiaoniNeural<br/>
+                    Gender: Female<br/>
+                    Name: zh-HK-HiuGaaiNeural<br/>
+                    Gender: Female<br/>
+                    Name: zh-HK-HiuMaanNeural<br/>
+                    Gender: Female<br/>
+                    Name: zh-HK-WanLungNeural<br/>
+                    Gender: Male<br/>
+                    Name: zh-TW-HsiaoChenNeural<br/>
+                    Gender: Female<br/>
+                    Name: zh-TW-HsiaoYuNeural<br/>
+                    Gender: Female<br/>
+                    Name: zh-TW-YunJheNeural<br/>
+                    Gender: Male<br/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <!-- 底部 -->
+    <div id="footer"></div>
+    <!-- end -->
+
+</div><!--/.fluid-container-->
+
+<!-- external javascript -->
+
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- library for cookie management -->
+<script src="js/jquery.cookie.js"></script>
+<!-- calender plugin -->
+<script src='bower_components/moment/min/moment.min.js'></script>
+<script src='bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
+<!-- data table plugin -->
+<script src='js/jquery.dataTables.min.js'></script>
+
+<!-- select or dropdown enhancer -->
+<script src="bower_components/chosen/chosen.jquery.min.js"></script>
+<!-- plugin for gallery image view -->
+<script src="bower_components/colorbox/jquery.colorbox-min.js"></script>
+<!-- notification plugin -->
+<script src="js/jquery.noty.js"></script>
+<!-- library for making tables responsive -->
+<script src="bower_components/responsive-tables/responsive-tables.js"></script>
+<!-- tour plugin -->
+<script src="bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+<!-- star rating plugin -->
+<script src="js/jquery.raty.min.js"></script>
+<!-- for iOS style toggle switch -->
+<script src="js/jquery.iphone.toggle.js"></script>
+<!-- autogrowing textarea plugin -->
+<script src="js/jquery.autogrow-textarea.js"></script>
+<!-- multiple file upload plugin -->
+<script src="js/jquery.uploadify-3.1.min.js"></script>
+<!-- history.js for cross-browser state change on ajax -->
+<script src="js/jquery.history.js"></script>
+<!-- application script for Charisma demo -->
+<!--<script src="js/charisma.js"></script>-->
+
+<script>
+    const { createApp, reactive, onMounted } = Vue;
+
+    const app = createApp({
+        methods: {
+            refreshPage() {
+                location.reload();
+            },
+            async restart() {
+                axios.post(window.AppConfig.apiUrl+'/restart', {timeout: 500});
+            },
+            tipClick(event){
+
+                $('#tipModal').modal('show');
+            }
+        },
+        setup() {
+            const info = reactive({});
+
+            const fetchUserInfo = async () => {
+                try {
+                    const inputNames = Array.from(document.querySelectorAll('#content input')).map(input => input.id);
+                    const selectNames = Array.from(document.querySelectorAll('#content select')).map(select => select.id);
+                    if(selectNames.length>0){
+                        inputNames.push(...selectNames);
+                    }
+                    console.log(inputNames);
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/read_yml', inputNames);
+                    console.log(response.data);
+
+                    // 更新 Vue 的响应式数据
+                    Object.assign(info, {
+                        speech_switch: response.data["speech.switch"],
+                        speech_select: response.data["speech.select"],
+                        speech_max_threads: Number(response.data["speech.speech_max_threads"]),
+
+                        gtp_vists_url: response.data["speech.gpt-sovits.gtp_vists_url"],
+                        gtp_vists_temperature: parseFloat(response.data["speech.gpt-sovits.temperature"]),
+                        gtp_vists_speed: parseFloat(response.data["speech.gpt-sovits.speed"]),
+
+                        edge_tts_speaker_name: response.data["speech.edge-tts.speaker_name"],
+
+                        bert_vists_url: response.data["speech.bert-vists.bert_vists_url"],
+                        bert_vists_speaker_name: response.data["speech.bert-vists.speaker_name"],
+                        bert_vists_sdp_ratio: parseFloat(response.data["speech.bert-vists.sdp_ratio"]),
+                        bert_vists_noise: parseFloat(response.data["speech.bert-vists.noise"]),
+                        bert_vists_noisew: parseFloat(response.data["speech.bert-vists.noisew"]),
+                        bert_vists_speed: Number(response.data["speech.bert-vists.speed"]),
+
+                        //助手
+                        assistant_switch: response.data["assistant.switch"],
+                        assistant_select: response.data["assistant.select"],
+
+                        assistant_gtp_vists_url: response.data["assistant.gpt-sovits.gtp_vists_url"],
+                        assistant_gtp_vists_temperature: parseFloat(response.data["assistant.gpt-sovits.temperature"]),
+                        assistant_gtp_vists_speed: parseFloat(response.data["assistant.gpt-sovits.speed"]),
+
+                        assistant_edge_tts_speaker_name: response.data["assistant.edge-tts.speaker_name"],
+
+                        assistant_bert_vists_url: response.data["assistant.bert-vists.bert_vists_url"],
+                        assistant_bert_vists_speaker_name: response.data["assistant.bert-vists.speaker_name"],
+                        assistant_bert_vists_sdp_ratio: parseFloat(response.data["assistant.bert-vists.sdp_ratio"]),
+                        assistant_bert_vists_noise: parseFloat(response.data["assistant.bert-vists.noise"]),
+                        assistant_bert_vists_noisew: parseFloat(response.data["assistant.bert-vists.noisew"]),
+                        assistant_bert_vists_speed: Number(response.data["assistant.bert-vists.speed"]),
+                    });
+
+                } catch (error) {
+                    console.error('Failed to fetch user info:', error);
+                }
+            };
+
+            onMounted(() => {
+                fetchUserInfo();
+            });
+
+            const handleSubmit = async () => {
+                try {
+                    info.speech_select = $("#speech\\.select").val()
+                    info.assistant_select = $("#assistant\\.select").val()
+
+                    info.speech_switch = $("#speech\\.switch").is(':checked');
+                    info.assistant_switch = $("#assistant\\.switch").is(':checked');
+
+                    let postData = {
+                        "speech.speech_max_threads": Number(info.speech_max_threads),
+                        "speech.switch": info.speech_switch,
+                        "speech.select": info.speech_select,
+                        "speech.gpt-sovits.gtp_vists_url": info.gtp_vists_url,
+                        "speech.gpt-sovits.temperature": parseFloat(info.gtp_vists_temperature),
+                        "speech.gpt-sovits.speed": parseFloat(info.gtp_vists_speed),
+                        "speech.edge-tts.speaker_name": info.edge_tts_speaker_name,
+                        "speech.bert-vists.bert_vists_url": info.bert_vists_url,
+                        "speech.bert-vists.speaker_name": info.bert_vists_speaker_name,
+                        "speech.bert-vists.sdp_ratio": parseFloat(info.bert_vists_sdp_ratio),
+                        "speech.bert-vists.noise": parseFloat(info.bert_vists_noise),
+                        "speech.bert-vists.noisew": parseFloat(info.bert_vists_noisew),
+                        "speech.bert-vists.speed": Number(info.bert_vists_speed),
+
+                        "assistant.switch": info.assistant_switch,
+                        "assistant.select": info.assistant_select,
+                        "assistant.gpt-sovits.gtp_vists_url": info.assistant_gtp_vists_url,
+                        "assistant.gpt-sovits.temperature": parseFloat(info.assistant_gtp_vists_temperature),
+                        "assistant.gpt-sovits.speed": parseFloat(info.assistant_gtp_vists_speed),
+                        "assistant.edge-tts.speaker_name": info.assistant_edge_tts_speaker_name,
+                        "assistant.bert-vists.bert_vists_url": info.assistant_bert_vists_url,
+                        "assistant.bert-vists.speaker_name": info.assistant_bert_vists_speaker_name,
+                        "assistant.bert-vists.sdp_ratio": parseFloat(info.assistant_bert_vists_sdp_ratio),
+                        "assistant.bert-vists.noise": parseFloat(info.assistant_bert_vists_noise),
+                        "assistant.bert-vists.noisew": parseFloat(info.assistant_bert_vists_noisew),
+                        "assistant.bert-vists.speed": Number(info.assistant_bert_vists_speed),
+                    };
+                    console.log(postData);
+                    // 发送 POST 请求到后端 API
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/write_yml', postData, headers={'Content-Type': 'application/json'});
+                    console.log('更新信息', response.data);
+                    if(response.data["status"]=="成功") {
+                        $.jBox.tip('更新成功', 'success');
+                    }
+                    // 这里可以添加更多逻辑，比如重定向到另一个页面
+                } catch (error) {
+                    $.jBox.tip('更新失败', 'error');
+                    console.error('更新失败', error);
+                }
+            };
+
+            return {
+                info,
+                handleSubmit
+            };
+        }
+    }).mount('#content');
+</script>
+
+
+</body>
+</html>

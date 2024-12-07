@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="utf-8">
+    <title>Web服务基础配置</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ai吟美管理后台">
+    <meta name="author" content="程序猿的退休生活">
+
+    <!-- The styles -->
+    <link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+
+    <link href="css/charisma-app.css" rel="stylesheet">
+    <link href='bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='css/jquery.noty.css' rel='stylesheet'>
+    <link href='css/noty_theme_default.css' rel='stylesheet'>
+    <link href='css/elfinder.min.css' rel='stylesheet'>
+    <link href='css/elfinder.theme.css' rel='stylesheet'>
+    <link href='css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href='css/uploadify.css' rel='stylesheet'>
+    <link href='css/animate.min.css' rel='stylesheet'>
+    <link href='css/extend.css' rel='stylesheet'>
+    <!-- jQuery -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <!--jbox-->
+    <link id="skin" rel="stylesheet" href="bower_components/jBox/Skins/Red/jbox.css" />
+    <script type="text/javascript" src="bower_components/jBox/jquery.jBox-2.3.min.js"></script>
+    <script type="text/javascript" src="bower_components/jBox/i18n/jquery.jBox-zh-CN.js"></script>
+    <!--vue-->
+    <script src="js/vue.3.5.13.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="config.js"></script>
+    <!-- The fav icon -->
+    <link rel="shortcut icon" href="img/favicon.ico">
+
+    <script type="text/javascript">
+        async function loadMenu() {
+            const response = await fetch('menu.html', {cache: 'force-cache'});
+            const menuHtml = await response.text();
+            document.getElementById('menu').innerHTML = menuHtml;
+        }
+
+        async function loadFooter() {
+            const response = await fetch('footer.html', {cache: 'force-cache'});
+            const footerHtml = await response.text();
+            document.getElementById('footer').innerHTML = footerHtml;
+        }
+
+        async function loadTopbar() {
+            const response = await fetch('topbar.html', {cache: 'force-cache'});
+            const topbarHtml = await response.text();
+            document.getElementById('topbar').innerHTML = topbarHtml;
+
+            // 菜单加载完成后，加载其他JavaScript文件
+            const script = document.createElement('script');
+            script.src = 'js/charisma.js';
+            document.head.appendChild(script);
+        }
+
+        // DOMContentLoaded 事件确保 DOM 已经加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+            loadTopbar();
+            loadFooter();
+        });
+    </script>
+</head>
+
+<body>
+<!-- topbar starts -->
+<div id="topbar"></div>
+<!-- topbar ends -->
+<div class="ch-container">
+    <div class="row">
+
+        <!-- left menu starts -->
+        <div id="menu"></div>
+        <!-- left menu ends -->
+
+
+        <div id="content" class="col-lg-10 col-sm-10">
+            <!-- content starts -->
+            <div>
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="web_server.html">基础配置</a>
+                    </li>
+                </ul>
+            </div>
+
+            <form @submit.prevent="handleSubmit">
+            <div class="row">
+                <div class="box col-md-12">
+                    <div class="box-inner">
+                        <div class="box-header well" data-original-title="">
+                            <h2><i class="glyphicon glyphicon-edit"></i> 基础配置</h2>
+
+                            <div class="box-icon">
+                                <a href="#" class="btn btn-setting btn-round btn-default"><i
+                                        class="glyphicon glyphicon-cog"></i></a>
+                                <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                                        class="glyphicon glyphicon-chevron-up"></i></a>
+                                <a href="#" class="btn btn-close btn-round btn-default"><i
+                                        class="glyphicon glyphicon-remove"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="box-content">
+                            <br/>
+                            <span class="title">Web配置<span class="tip" data-toggle="tooltip" title="当前管理后台和后端api接口的端口设置"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="AiName">Ai名称</label>
+                                    <input type="text" class="form-control" id="AiName" placeholder="Ai名称" v-model="info.AiName">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="app.webport">前端端口</label><span class="tip" data-toggle="tooltip" title="修改前端端口后，web后台页面访问地址的端口会有变化"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="app.webport" placeholder="前端Html管理服务的端口" v-model="info.appwebport">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="app.port">后端端口</label><span class="tip" data-toggle="tooltip" title="修改后端端口后，web页面调用后台api地址需要配置manage/config.js的apiUrl参数"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="app.port" placeholder="后端Api服务的端口" v-model="info.appport">
+                                </div>
+                            </div>
+
+                            <span class="title">平台弹幕<span class="tip" data-toggle="tooltip" title="请自行到bilibili的开放平台申请秘钥"><i class="glyphicon glyphicon-question-sign"></i></span>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://open-live.bilibili.com/" target="_blank">申请账号</a></span>
+                            <hr>
+                            <div class="line">
+                                <div class="control-group">
+                                    <label class="control-label" for="app.mode">弹幕平台</label>
+                                    <div class="controls">
+                                        <select id="app.mode" multiple class="form-control" data-rel="chosen" v-model="info.mode" style="width: 100%;">
+                                            <option value="blivedm">B站</option>
+                                            <option value="douyin">抖音</option>
+                                            <option value="youtube">Youtube</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="danmaku.blivedm.room_id">B站直播房间号</label>
+                                    <input type="text" class="form-control" id="danmaku.blivedm.room_id" placeholder="B站直播房间号【闲时任务使用】" v-model="info.blivedm_room_id">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="danmaku.blivedm.room_uid">直播用户UID</label>
+                                    <input type="text" class="form-control" id="danmaku.blivedm.room_uid" placeholder="直播UID【闲时任务使用】" v-model="info.blivedm_room_uid">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="danmaku.blivedm.ACCESS_KEY_ID">B站开放平台KeyId</label>
+                                    <input type="password" class="form-control" id="danmaku.blivedm.ACCESS_KEY_ID" placeholder="B站开放平台KeyId" v-model="info.ACCESS_KEY_ID">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="danmaku.blivedm.ACCESS_KEY_SECRET">B站开放平台密钥</label>
+                                    <input type="password" class="form-control" id="danmaku.blivedm.ACCESS_KEY_SECRET" placeholder="B站开放平台密钥" v-model="info.ACCESS_KEY_SECRET">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="danmaku.blivedm.APP_ID">B站开放平台应用Id</label>
+                                    <input type="password" class="form-control" id="danmaku.blivedm.APP_ID" placeholder="B站开放平台密钥" v-model="info.APP_ID">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="danmaku.blivedm.ROOM_OWNER_AUTH_CODE">B站主播身份码</label>
+                                    <input type="password" class="form-control" id="danmaku.blivedm.ROOM_OWNER_AUTH_CODE" placeholder="B站主播身份码" v-model="info.ROOM_OWNER_AUTH_CODE">
+                                </div>
+                            </div>
+
+                            <div class="line">
+                                <div class="form-group">
+                                    <label for="danmaku.blivedm.sessdata">B站直播监听：心跳2【暂时不用】</label>
+                                    <input type="text" class="form-control" id="danmaku.blivedm.sessdata" placeholder="B站直播监听方式：sessdata" v-model="info.sessdata">
+                                </div>
+                            </div>
+
+                            <span class="title">闲时任务<span class="tip" data-toggle="tooltip" title="随机执行限时任务内容，比例:3:2:1：1、主动找直播间的用户聊天 2、播报直播间功能说明 3、积分排行榜展示"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="idle.switch">开关</label>
+                                    <input id="idle.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.idle_switch">
+                                </div>
+                                <div class="form-group position">
+                                    <label for="idle.limit_time">轮询时间【秒】</label>
+                                    <input type="text" class="form-control" id="idle.limit_time" placeholder="轮询时间【秒】，中途如果有唱歌、聊天、画画等任务，会重新计算时间" v-model="info.idle_limit_time">
+                                </div>
+                                <div class="form-group position" style="width: 300px">
+                                    <label for="idle.task_list">任务类型</label><span class="tip" data-toggle="tooltip" title="当前任务类型有三个：聊天、播报、积分，这是一个占比，相同类别数量越多占比越大"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="idle.task_list" placeholder="当前任务类型有三个：聊天、播报、积分" v-model="info.task_list">
+                                </div>
+                            </div>
+
+                            <div class="line">
+                                <div class="form-group position" style="width: 95%">
+                                    <label for="idle.broadcast_list">播报列表</label><span class="tip" data-toggle="tooltip" title="播报任务的文本播放，填写数组文本，会随机抽取一条播文进行朗读。{Ai_Name}是你配置Ai名称的变量。"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <br>
+                                    <textarea id="idle.broadcast_list" class="autogrow" style="width: 90%; height: 150px" placeholder="填写数组文本"  v-model="info.broadcast_list"></textarea>
+                                </div>
+                            </div>
+
+                            <span class="title">进入房间欢迎词</span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label class="control-label" for="welcome.switch">开关</label>
+                                    <input id="welcome.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.welcome_switch">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label class="control-label" for="welcome.is_llm_welcome">是否使用LLM回复欢迎</label>
+                                    <input id="welcome.is_llm_welcome" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.is_llm_welcome">
+                                </div>
+
+                                <div class="form-group position" style="width: 400px">
+                                    <label for="welcome.welcome_not_allow">此用户是否允许欢迎词</label>
+                                    <input type="text" class="form-control" id="welcome.welcome_not_allow" placeholder="此用户是否允许欢迎词【用户列表】" v-model="info.welcome_not_allow">
+                                </div>
+                            </div>
+
+                            <span class="title">翻译服务<span class="tip" data-toggle="tooltip" title="翻译服务用于感情变化的日语对话；还有画画的提示词翻译。"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label class="control-label" for="translate.switch">开关</label>
+                                    <input id="translate.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.translate_switch">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="translate.select">服务选择</label><br>
+                                    <select id="translate.select" data-rel="chosen" v-model="info.translate_select">
+                                        <option value="baidu">百度</option>
+                                        <option value="duckduckgo">duckduckgo</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="translate.HttpProxies">服务代理</label>
+                                    <input type="text" class="form-control" id="translate.HttpProxies" placeholder="默认配置：{ 'http': 'socks5://127.0.0.1:10806', 'https': 'socks5://127.0.0.1:10806' }" v-model="info.translate_HttpProxies">
+                                </div>
+                            </div>
+
+                            <div class="line">
+                                <button id="save" type="submit" class="btn btn-default" title="保存配置后不会立马生效，需要点击重启应用按钮才会生效" data-toggle="tooltip">保存配置</button>
+                                &nbsp;
+                                <button id="cancel" type="button" class="btn btn-default" @click="refreshPage">取消</button>
+                                &nbsp;
+                                <button id="restart" type="button" class="btn btn-warning" title="重启应用会重新加载配置，中途会有短暂中断" data-toggle="tooltip" @click="restart">重启应用</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/span-->
+
+            </div><!--/row-->
+            </form>
+            <!-- content ends -->
+        </div><!--/#content.col-md-0-->
+    </div><!--/fluid-row-->
+
+    <hr>
+    <!-- 底部 -->
+    <div id="footer"></div>
+    <!-- end -->
+
+</div><!--/.fluid-container-->
+
+<!-- external javascript -->
+
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- library for cookie management -->
+<script src="js/jquery.cookie.js"></script>
+<!-- calender plugin -->
+<script src='bower_components/moment/min/moment.min.js'></script>
+<script src='bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
+<!-- data table plugin -->
+<script src='js/jquery.dataTables.min.js'></script>
+
+<!-- select or dropdown enhancer -->
+<script src="bower_components/chosen/chosen.jquery.min.js"></script>
+<!-- plugin for gallery image view -->
+<script src="bower_components/colorbox/jquery.colorbox-min.js"></script>
+<!-- notification plugin -->
+<script src="js/jquery.noty.js"></script>
+<!-- library for making tables responsive -->
+<script src="bower_components/responsive-tables/responsive-tables.js"></script>
+<!-- tour plugin -->
+<script src="bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+<!-- star rating plugin -->
+<script src="js/jquery.raty.min.js"></script>
+<!-- for iOS style toggle switch -->
+<script src="js/jquery.iphone.toggle.js"></script>
+<!-- autogrowing textarea plugin -->
+<script src="js/jquery.autogrow-textarea.js"></script>
+<!-- multiple file upload plugin -->
+<script src="js/jquery.uploadify-3.1.min.js"></script>
+<!-- history.js for cross-browser state change on ajax -->
+<script src="js/jquery.history.js"></script>
+<!-- application script for Charisma demo -->
+<!--<script src="js/charisma.js"></script>-->
+
+<script>
+    const { createApp, reactive, onMounted } = Vue;
+
+    const app = createApp({
+        methods: {
+            refreshPage() {
+                location.reload();
+            },
+            async restart() {
+                axios.post(window.AppConfig.apiUrl+'/restart', {timeout: 500});
+            }
+        },
+        setup() {
+            const info = reactive({});
+
+            // 暴露以便外部访问
+            //app.config.globalProperties.$info = info;
+
+            const fetchUserInfo = async () => {
+                try {
+                    const inputNames = Array.from(document.querySelectorAll('#content input')).map(input => input.id);
+                    const selectNames = Array.from(document.querySelectorAll('#content select')).map(select => select.id);
+                    if(selectNames.length>0){
+                        inputNames.push(...selectNames);
+                    }
+                    inputNames.push("idle.broadcast_list");
+
+                    console.log(inputNames);
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/read_yml', inputNames);
+                    console.log(response.data);
+
+                    // 自动填充数据
+                    // Object.keys(response.data).forEach(key => {
+                    //     const inputElement = document.getElementById(key);
+                    //     if (inputElement) {
+                    //         inputElement.value = response.data[key];
+                    //     }
+                    // });
+
+                    // 更新 Vue 的响应式数据
+                    //info.value = response.data;
+                    Object.assign(info, {
+                        AiName: response.data.AiName,
+                        mode: response.data["app.mode"],
+                        appwebport: Number(response.data["app.webport"]),
+                        appport: Number(response.data["app.port"]),
+                        blivedm_room_id: Number(response.data["danmaku.blivedm.room_id"]),
+                        blivedm_room_uid: Number(response.data["danmaku.blivedm.room_uid"]),
+                        ACCESS_KEY_ID: response.data["danmaku.blivedm.ACCESS_KEY_ID"],
+                        ACCESS_KEY_SECRET: response.data["danmaku.blivedm.ACCESS_KEY_SECRET"],
+                        APP_ID: Number(response.data["danmaku.blivedm.APP_ID"]),
+                        ROOM_OWNER_AUTH_CODE: response.data["danmaku.blivedm.ROOM_OWNER_AUTH_CODE"],
+                        sessdata: response.data["danmaku.blivedm.sessdata"],
+
+                        idle_switch: response.data["idle.switch"],
+                        idle_limit_time: Number(response.data["idle.limit_time"]),
+                        task_list: JSON.stringify(response.data["idle.task_list"]),
+                        broadcast_list: JSON.stringify(response.data["idle.broadcast_list"]),
+
+                        welcome_switch: response.data["welcome.switch"],
+                        is_llm_welcome: response.data["welcome.is_llm_welcome"],
+                        welcome_not_allow: JSON.stringify(response.data["welcome.welcome_not_allow"]),
+
+                        translate_switch: response.data["translate.switch"],
+                        translate_select: response.data["translate.select"],
+                        translate_HttpProxies: response.data["translate.HttpProxies"],
+                    });
+                    // info = reactive({
+                    //     "AiName": response.data.AiName,
+                    //     "appwebport": response.data["app.webport"],
+                    //     "appport": response.data["app.port"]
+                    // });
+
+                } catch (error) {
+                    console.error('Failed to fetch user info:', error);
+                }
+            };
+
+            onMounted(() => {
+                fetchUserInfo();
+            });
+
+            const handleSubmit = async () => {
+                try {
+                    info.idle_switch = $("#idle\\.switch").is(':checked');
+                    info.welcome_switch = $("#welcome\\.switch").is(':checked');
+                    info.is_llm_welcome = $("#welcome\\.is_llm_welcome").is(':checked');
+                    info.translate_switch = $("#translate\\.switch").is(':checked');
+
+                    //info.is_llm_welcome = $("#welcome\\.is_llm_welcome").val() === "false" ? false : true;
+                    info.mode = $("#app\\.mode").val();
+                    welcome_not_allow=null;
+                    if(info.welcome_not_allow!="")
+                        welcome_not_allow = JSON.parse(info.welcome_not_allow);
+
+                    translate_HttpProxies=null;
+                    if(info.translate_HttpProxies!="")
+                        translate_HttpProxies = JSON.parse(info.translate_HttpProxies);
+
+                    info.translate_select = $("#translate\\.select").val();
+
+                    task_list=null;
+                    if(info.task_list!="")
+                        task_list = JSON.parse(info.task_list);
+
+                    broadcast_list=null;
+                    if(info.broadcast_list!="")
+                        broadcast_list = JSON.parse(info.broadcast_list);
+
+                    let postData = {
+                        "AiName": info.AiName,
+                        "app.webport": Number(info.appwebport),
+                        "app.port": Number(info.appport),
+                        "app.mode": info.mode,
+                        "danmaku.blivedm.room_id": Number(info.blivedm_room_id),
+                        "danmaku.blivedm.room_uid": Number(info.blivedm_room_uid),
+                        "danmaku.blivedm.ACCESS_KEY_ID": info.ACCESS_KEY_ID,
+                        "danmaku.blivedm.ACCESS_KEY_SECRET": info.ACCESS_KEY_SECRET,
+                        "danmaku.blivedm.APP_ID": Number(info.APP_ID),
+                        "danmaku.blivedm.ROOM_OWNER_AUTH_CODE": info.ROOM_OWNER_AUTH_CODE,
+                        "danmaku.blivedm.sessdata": info.sessdata,
+
+                        "idle.switch": info.idle_switch,
+                        "idle.limit_time": Number(info.idle_limit_time),
+                        "idle.task_list": task_list,
+                        "idle.broadcast_list": broadcast_list,
+
+                        "welcome.switch": info.welcome_switch,
+                        "welcome.is_llm_welcome": info.is_llm_welcome,
+                        "welcome.welcome_not_allow": welcome_not_allow,
+
+                        "translate.switch": info.translate_switch,
+                        "translate.select": info.translate_select,
+                        "translate.HttpProxies": translate_HttpProxies,
+                    };
+                    console.log(postData);
+                    // 发送 POST 请求到后端 API
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/write_yml', postData, headers={'Content-Type': 'application/json'});
+                    console.log('更新成功', response.data);
+                    if(response.data["status"]=="成功") {
+                        $.jBox.tip('更新成功', 'success');
+                    }
+                } catch (error) {
+                    console.error('更新失败', error);
+                }
+            };
+
+            return {
+                info,
+                handleSubmit
+            };
+        }
+    }).mount('#content');
+</script>
+
+
+</body>
+</html>

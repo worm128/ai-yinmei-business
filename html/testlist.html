@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue2.6.14.min.js"></script>
+</head>
+<body>
+<div id="d1">
+    <h1>购物车</h1>
+    <div v-if="goodsList.length==0">购物车什么都木有</div>
+    <table v-else>
+        <thead>
+        <tr>
+            <th>商品id</th>
+            <th>商品名字</th>
+            <th>商品数量</th>
+            <th>商品价格</th>
+            <th>商品图片</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in goodsList">
+            <th>{{item.userface}}</th>
+            <td>{{item.userName}}</td>
+            <td>{{item.score}}</td>
+            <td>{{item.score}}</td>
+            <td><img :src="item.img" alt="" width="50px" height="50px"></td>
+        </tr>
+        </tbody>
+    </table>
+    <button @click="loadData">加载购物车</button>
+</div>
+</body>
+<script>
+    var vm = new Vue({
+        el: '#d1',
+        data: {
+            goodsList: []
+        },
+        methods: {
+            loadData() {
+                this.goodsList = [{"userName": "\u7a0b\u5e8f\u733f\u7684\u9000\u4f11\u751f\u6d3b", "userface": "https://i1.hdslb.com/bfs/face/d5addd247a6c2b2c3ed7b25d439c13f02505fac1.jpg", "score": 5555}, {"userName": "winlone", "userface": "http://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280", "score": 243}, {"userName": "\u5c0f\u5929\u4f7f", "userface": "http://gips3.baidu.com/it/u=3886271102,3123389489&fm=3028&app=3028&f=JPEG&fmt=auto?w=1280&h=960", "score": 300}]
+            }
+        }
+    })
+</script>
+</html>

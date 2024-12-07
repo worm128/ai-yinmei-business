@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/vue.3.5.13.js"></script>
+    <script src="js/axios.min.js"></script>
+    <style>
+    .tip {
+            float: none; width: 100%; height: 80px;
+    }
+    .num {
+            float: left;
+    }
+    .rightArea {
+            float: left; height: 80px;
+    }
+    .avatar {
+            float: left;
+            width: 40px; /* 或者你想要的头像大小 */
+            height: 40px; /* 宽高相同以形成完美的圆形 */
+            border: 1px #000000 solid;
+            border-radius: 5px;
+            object-fit: scale-down; /* 确保图片填充整个容器，并且超出的部分会被剪裁掉 */
+            background-position: center; /* 背景图片居中 */
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8); /* 阴影效果 */
+            background-size: 100% 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="rank">
+    <div class="tip">
+        <div class="avatar" :style="{ backgroundImage: `url(${info.userface})` }"></div>
+        <div class="rightArea">
+            <div class="score good">{{ info.score }}积分</div>
+            <div class="username">{{ info.userName }}</div>
+            <input type="text" class="form-control" id="AiName" placeholder="Ai名称"  v-model="info.userName">
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    const { createApp, ref } = Vue;
+
+    const app = createApp({
+      setup() {
+        const info = ref({});
+
+        // 暴露 randlist 以便外部访问
+        app.config.globalProperties.$info = info;
+
+        return {
+          info
+        };
+      }
+    });
+    const vm = app.mount('#rank');
+
+    vm.$info.value = {"userName": "程序猿的退休生活", "userface": "https://i1.hdslb.com/bfs/face/d5addd247a6c2b2c3ed7b25d439c13f02505fac1.jpg", "score": 5555};
+
+  </script>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>提示</title>
+    <script type="text/javascript" src="jquery-3.7.1.min.js"></script>
+    <style>
+        .avatar {
+            float: left;
+            width: 200px; /* 或者你想要的头像大小 */
+            height: 200px; /* 宽高相同以形成完美的圆形 */
+            border-radius: 50%; /* 将头像设为圆形 */
+            object-fit: scale-down; /* 确保图片填充整个容器，并且超出的部分会被剪裁掉 */
+            background-position: center; /* 背景图片居中 */
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.8); /* 阴影效果 */
+            background-size: 100% 100%;
+        }
+
+        .rightArea {
+            float: left;
+        }
+
+        .score, .username {
+            font-weight: bold;
+            font-family: 微软雅黑;
+            width: auto;
+            height: 100px;
+            line-height: 100px;
+            padding-left: 20px;
+            text-shadow: 2px 2px 2px #000000;
+        }
+
+        .score {
+            font-size: 65px;
+        }
+
+        .username {
+            font-size: 45px;
+            color: #FFFFFF;
+        }
+
+        .tip {
+            width: auto; height: auto;
+            animation: tip 20s infinite;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+            position: absolute;
+
+        }
+
+        @keyframes tip {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-200px);
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="area">
+
+</div>
+
+<script>
+    let ws,timerId
+    function connect() {
+        ws = new WebSocket("ws://localhost:18765");
+        timerId;
+        ws.onopen = function () {
+            console.log("Connected!");
+        };
+        ws.onmessage = function (event) {
+            console.log("Received message:", event.data);
+            jsonstr = JSON.parse(event.data);
+            if (jsonstr["type"] != "积分提示")
+                return;
+
+            let timestamp = Math.round(new Date());
+            let id = "tip" + timestamp;
+
+            html = "<div id=\"" + id + "\" class=\"tip\"><div class=\"avatar\"></div><div class=\"rightArea\"><div class=\"score\"></div><div class=\"username\"></div></div></div>"
+            $('#area').append(html);
+            ntop = getRandomInt(100, 700)
+            nleft = getRandomInt(0, 800)
+            $('#' + id + '.tip').css({'top': ntop, 'left': nleft});
+
+            $('#' + id + ' .avatar').css("background-image", "url('" + jsonstr["userface"] + "')");
+            $('#' + id + ' .username').text(jsonstr["username"]);
+            if (jsonstr["score"] > 0) {
+                $('#' + id + ' .score').text(jsonstr["oper"] + ":积分+" + jsonstr["score"]).css({'color': "#1db100"});
+            } else {
+                $('#' + id + ' .score').text(jsonstr["oper"] + ":积分" + jsonstr["score"]).css({'color': "#ff3063"});
+            }
+            // 等待5秒后，删除元素
+            setTimeout(function () {
+                $('#' + id).remove();
+            }, 20000);
+        };
+
+        ws.onclose = function (event) {
+            console.log('WebSocket连接已关闭');
+            setTimeout(reconnect, 5000);
+        };
+    }
+
+    function reconnect() {
+        if (ws !== null && (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING)) {
+            console.log("尝试重连WebSocket...");
+            connect();
+        }
+    }
+
+    // 初始化连接
+    connect();
+
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    /*jsonstr = {"username":"程序猿的退休生活","score":1,"userface": "https://i1.hdslb.com/bfs/face/d5addd247a6c2b2c3ed7b25d439c13f02505fac1.jpg"}
+    id = "tip1";
+        html = "<div id=\""+id+"\" class=\"tip\"><div class=\"avatar\"></div><div class=\"rightArea\"><div class=\"score\"></div><div class=\"username\"></div></div></div>"
+        $('#area').append(html);
+        ntop = getRandomInt(100,700)
+        nleft = getRandomInt(0,800)
+        $('#'+id+'.tip').css({'top': ntop, 'left': nleft});
+        $('#'+id+' .avatar').css("background-image", "url('" + jsonstr["userface"] + "')");
+        $('#'+id+' .username').text(jsonstr["username"]);
+        if (jsonstr["score"] > 0) {
+            $('#'+id+' .score').text("积分+" + jsonstr["score"]).css({'color': "#1db100"});
+        } else {
+            $('#'+id+' .score').text("积分" + jsonstr["score"]).css({'color': "#ff3063"});
+        }
+        // 等待5秒后，删除ID为'myElement'的元素
+        setTimeout(function() {
+            $('#'+id).remove();
+        }, 5000);
+    jsonstr = {"username":"天空之王","score":-2,"userface": "https://i1.hdslb.com/bfs/face/d5addd247a6c2b2c3ed7b25d439c13f02505fac1.jpg"}
+    id2 = "tip2";
+        html = "<div id=\""+id2+"\" class=\"tip\"><div class=\"avatar\"></div><div class=\"rightArea\"><div class=\"score\"></div><div class=\"username\"></div></div></div>"
+        $('#area').append(html);
+        ntop = getRandomInt(100,700)
+        nleft = getRandomInt(0,800)
+        $('#'+id2+'.tip').css({'top': ntop, 'left': nleft});
+        $('#'+id2+' .avatar').css("background-image", "url('" + jsonstr["userface"] + "')");
+        $('#'+id2+' .username').text(jsonstr["username"]);
+        if (jsonstr["score"] > 0) {
+            $('#'+id2+' .score').text("积分+" + jsonstr["score"]).css({'color': "#1db100"});
+        } else {
+            $('#'+id2+' .score').text("积分" + jsonstr["score"]).css({'color': "#ff3063"});
+        }
+        // 等待5秒后，删除ID为'myElement'的元素
+        setTimeout(function() {
+            $('#'+id2).remove();
+        }, 5000);*/
+</script>
+</body>
+</html>

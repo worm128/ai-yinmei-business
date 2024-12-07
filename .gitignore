@@ -1,0 +1,9 @@
+*__pycache__/
+runtime/
+.github/
+.git/
+logs/
+output/
+porn/
+config*.yml
+*.exe

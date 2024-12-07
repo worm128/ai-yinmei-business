@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="utf-8">
+    <title>数据库配置</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ai吟美管理后台">
+    <meta name="author" content="程序猿的退休生活">
+
+    <!-- The styles -->
+    <link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+
+    <link href="css/charisma-app.css" rel="stylesheet">
+    <link href='bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='css/jquery.noty.css' rel='stylesheet'>
+    <link href='css/noty_theme_default.css' rel='stylesheet'>
+    <link href='css/elfinder.min.css' rel='stylesheet'>
+    <link href='css/elfinder.theme.css' rel='stylesheet'>
+    <link href='css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href='css/uploadify.css' rel='stylesheet'>
+    <link href='css/animate.min.css' rel='stylesheet'>
+    <link href='css/extend.css' rel='stylesheet'>
+    <!-- jQuery -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <!--jbox-->
+    <link id="skin" rel="stylesheet" href="bower_components/jBox/Skins/Red/jbox.css" />
+    <script type="text/javascript" src="bower_components/jBox/jquery.jBox-2.3.min.js"></script>
+    <script type="text/javascript" src="bower_components/jBox/i18n/jquery.jBox-zh-CN.js"></script>
+    <!--vue-->
+    <script src="js/vue.3.5.13.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="config.js"></script>
+    <!-- The fav icon -->
+    <link rel="shortcut icon" href="img/favicon.ico">
+
+    <script type="text/javascript">
+        async function loadMenu() {
+            const response = await fetch('menu.html', {cache: 'force-cache'});
+            const menuHtml = await response.text();
+            document.getElementById('menu').innerHTML = menuHtml;
+        }
+
+        async function loadFooter() {
+            const response = await fetch('footer.html', {cache: 'force-cache'});
+            const footerHtml = await response.text();
+            document.getElementById('footer').innerHTML = footerHtml;
+        }
+
+        async function loadTopbar() {
+            const response = await fetch('topbar.html', {cache: 'force-cache'});
+            const topbarHtml = await response.text();
+            document.getElementById('topbar').innerHTML = topbarHtml;
+
+            // 菜单加载完成后，加载其他JavaScript文件
+            const script = document.createElement('script');
+            script.src = 'js/charisma.js';
+            document.head.appendChild(script);
+        }
+
+        // DOMContentLoaded 事件确保 DOM 已经加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+            loadTopbar();
+            loadFooter();
+        });
+    </script>
+</head>
+
+<body>
+<!-- topbar starts -->
+<div id="topbar"></div>
+<!-- topbar ends -->
+<div class="ch-container">
+    <div class="row">
+
+        <!-- left menu starts -->
+        <div id="menu"></div>
+        <!-- left menu ends -->
+
+
+        <div id="content" class="col-lg-10 col-sm-10">
+            <!-- content starts -->
+            <div>
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="database.html">数据库配置</a>
+                    </li>
+                </ul>
+            </div>
+
+            <form @submit.prevent="handleSubmit">
+            <div class="row">
+                <div class="box col-md-12">
+                    <div class="box-inner">
+                        <div class="box-header well" data-original-title="">
+                            <h2><i class="glyphicon glyphicon-edit"></i> 数据库配置</h2>
+
+                            <div class="box-icon">
+                                <a href="#" class="btn btn-setting btn-round btn-default"><i
+                                        class="glyphicon glyphicon-cog"></i></a>
+                                <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                                        class="glyphicon glyphicon-chevron-up"></i></a>
+                                <a href="#" class="btn btn-close btn-round btn-default"><i
+                                        class="glyphicon glyphicon-remove"></i></a>
+                            </div>
+                        </div>
+                        <div class="box-content">
+                            <br/>
+                            <span class="title">Mongodb配置<span class="tip" data-toggle="tooltip" title="使用Mongodb记录直播间的用户数据、积分、聊天和各种画画、唱歌等记录"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="mongodb.switch">开关</label>
+                                    <input id="mongodb.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.mongodb_switch">
+                                </div>
+
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="mongodb.url">Mongodb Url</label>
+                                    <input type="text" class="form-control" id="mongodb.url" placeholder="Mongodb IP地址:端口" v-model="info.mongodb_url">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="mongodb.dbname">数据库名称</label>
+                                    <input type="text" class="form-control" id="mongodb.dbname" placeholder="Mongodb数据库名称" v-model="info.dbname">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="mongodb.username">账号</label>
+                                    <input type="text" class="form-control" id="mongodb.username" placeholder="Mongodb账号" v-model="info.username">
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="mongodb.password">密码</label>
+                                    <input type="text" class="form-control" id="mongodb.password" placeholder="Mongodb账号" v-model="info.password">
+                                </div>
+                            </div>
+                            <span class="title">长期记忆<span class="tip" title="长期记忆库让用户和Ai对话的数据记录在向量数据库，当用户通过某些时间代词的短语聊天时候，会触发Ai唤醒那一次对话的历史数据" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="memory.switch">开关</label>
+                                    <input id="memory.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.memory_switch">
+                                </div>
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="memory.server_url">记忆服务</label>
+                                    <input type="text" class="form-control" id="memory.server_url" placeholder="http://IP:端口" v-model="info.memoryServer_url">
+                                </div>
+                            </div>
+
+                            <span class="title">意图分析<span class="tip" data-toggle="tooltip" title="Ai分析用户问题是画画、唱歌、跳舞、搜图、搜索、切歌、切换场景、换装的哪一种"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="analysis.switch">开关</label>
+                                    <input id="analysis.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.analysis_switch">
+                                </div>
+
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="analysis.server_url">意图分析服务</label>
+                                    <input type="text" class="form-control" id="analysis.server_url" placeholder="http://ip:端口" v-model="info.analysisServer_url">
+                                </div>
+                            </div>
+                            <div class="line">
+                                <div class="form-group position" style="width: 400px;">
+                                    <label for="analysis.extract.fastgpt_url">文本提取器服务地址<span class="tip" data-toggle="tooltip" title="需要使用大模型抽取开放性的搜图、搜索、切歌、切换场景、换装的操作关键字"><i class="glyphicon glyphicon-question-sign"></i></span></label>
+                                    <input type="text" class="form-control" id="analysis.extract.fastgpt_url" placeholder="Fastgpt的http://ip:端口，文本提取器：用于开放新唱歌、跳舞、画画的特征关键字提取" v-model="info.extractFastgpt_url">
+                                </div>
+
+                                <div class="form-group position" style="width: 650px;">
+                                    <label for="analysis.extract.fastgpt_authorization">文本提取器密钥</label>
+                                    <input type="text" class="form-control" id="analysis.extract.fastgpt_authorization" placeholder="Fastgpt的密钥" v-model="info.extractFastgpt_authorization">
+                                </div>
+                            </div>
+
+                            <span class="title">扩散思维<span class="tip" data-toggle="tooltip" title="Ai扩散思维使用neo4j的图数据库，让Ai联想词语时候更加丰富多彩"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="graphdb.switch">开关</label>
+                                    <input id="graphdb.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.graphdb_switch">
+                                </div>
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="graphdb.server_url">图数据库服务</label>
+                                    <input type="text" class="form-control" id="graphdb.server_url" placeholder="http://ip:端口" v-model="info.graphdbServer_url">
+                                </div>
+                            </div>
+
+                            <div class="line">
+                                <button id="save" type="submit" class="btn btn-default" title="保存配置后不会立马生效，需要点击重启应用按钮才会生效" data-toggle="tooltip">保存配置</button>
+                                &nbsp;
+                                <button id="cancel" type="button" class="btn btn-default" @click="refreshPage">取消</button>
+                                &nbsp;
+                                <button id="restart" type="button" class="btn btn-warning" title="重启应用会重新加载配置，中途会有短暂中断" data-toggle="tooltip" @click="restart">重启应用</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/span-->
+
+            </div><!--/row-->
+            </form>
+            <!-- content ends -->
+        </div><!--/#content.col-md-0-->
+    </div><!--/fluid-row-->
+
+    <div class="modal fade" id="tipModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body">
+                    Here settings can be configured...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <!-- 底部 -->
+    <div id="footer"></div>
+    <!-- end -->
+
+</div><!--/.fluid-container-->
+
+<!-- external javascript -->
+
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- library for cookie management -->
+<script src="js/jquery.cookie.js"></script>
+<!-- calender plugin -->
+<script src='bower_components/moment/min/moment.min.js'></script>
+<script src='bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
+<!-- data table plugin -->
+<script src='js/jquery.dataTables.min.js'></script>
+
+<!-- select or dropdown enhancer -->
+<script src="bower_components/chosen/chosen.jquery.min.js"></script>
+<!-- plugin for gallery image view -->
+<script src="bower_components/colorbox/jquery.colorbox-min.js"></script>
+<!-- notification plugin -->
+<script src="js/jquery.noty.js"></script>
+<!-- library for making tables responsive -->
+<script src="bower_components/responsive-tables/responsive-tables.js"></script>
+<!-- tour plugin -->
+<script src="bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+<!-- star rating plugin -->
+<script src="js/jquery.raty.min.js"></script>
+<!-- for iOS style toggle switch -->
+<script src="js/jquery.iphone.toggle.js"></script>
+<!-- autogrowing textarea plugin -->
+<script src="js/jquery.autogrow-textarea.js"></script>
+<!-- multiple file upload plugin -->
+<script src="js/jquery.uploadify-3.1.min.js"></script>
+<!-- history.js for cross-browser state change on ajax -->
+<script src="js/jquery.history.js"></script>
+<!-- application script for Charisma demo -->
+<!--<script src="js/charisma.js"></script>-->
+
+<script>
+    const { createApp, reactive, onMounted } = Vue;
+
+    const app = createApp({
+        methods: {
+            refreshPage() {
+                location.reload();
+            },
+            async restart() {
+                axios.post(window.AppConfig.apiUrl+'/restart', {timeout: 500});
+            },
+            tipClick(event){
+                //console.log('Event Object:', event);
+                console.log('Event Target:', event.currentTarget);
+                const buttonId = event.currentTarget.getAttribute('id');
+                console.log(buttonId);
+                const buttonAlt = event.currentTarget.getAttribute('alt');
+                console.log(buttonAlt);
+                $('.modal-body').text(buttonAlt)
+                $('#tipModal').modal('show');
+            }
+        },
+        setup() {
+            const info = reactive({});
+
+            const fetchUserInfo = async () => {
+                try {
+                    const inputNames = Array.from(document.querySelectorAll('#content input')).map(input => input.id);
+
+                    console.log(inputNames);
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/read_yml', inputNames);
+                    console.log(response.data);
+
+                    // 更新 Vue 的响应式数据
+                    Object.assign(info, {
+                        mongodb_switch: response.data["mongodb.switch"],
+                        mongodb_url: response.data["mongodb.url"],
+                        dbname: response.data["mongodb.dbname"],
+                        username: response.data["mongodb.username"],
+                        password: response.data["mongodb.password"],
+
+                        memory_switch: response.data["memory.switch"],
+                        memoryServer_url: response.data["memory.server_url"],
+
+                        analysis_switch: response.data["analysis.switch"],
+                        analysisServer_url: response.data["analysis.server_url"],
+                        extractFastgpt_url: response.data["analysis.extract.fastgpt_url"],
+                        extractFastgpt_authorization: response.data["analysis.extract.fastgpt_authorization"],
+
+                        graphdb_switch: response.data["graphdb.switch"],
+                        graphdbServer_url: response.data["graphdb.server_url"],
+                    });
+
+                } catch (error) {
+                    console.error('Failed to fetch user info:', error);
+                }
+            };
+
+            onMounted(() => {
+                fetchUserInfo();
+            });
+
+            const handleSubmit = async () => {
+                try {
+                    info.mongodb_switch = $("#mongodb\\.switch").is(':checked');
+                    info.memory_switch = $("#memory\\.switch").is(':checked');
+                    info.analysis_switch = $("#analysis\\.switch").is(':checked');
+                    info.graphdb_switch = $("#graphdb\\.switch").is(':checked');
+
+                    info.is_llm_welcome = $("#welcome\\.is_llm_welcome").val() === "false" ? false : true;
+                    info.mode = $("#app\\.mode").val();
+                    if (typeof info.welcome_not_allow === 'string') {
+                        info.welcome_not_allow = info.welcome_not_allow.split(',');
+                    }
+                    let postData = {
+                        "mongodb.switch": info.mongodb_switch,
+                        "mongodb.url": info.mongodb_url,
+                        "mongodb.dbname": info.dbname,
+                        "mongodb.username": info.username,
+                        "mongodb.password": info.password,
+
+                        "memory.switch": info.memory_switch,
+                        "memory.server_url": info.memoryServer_url,
+
+                        "analysis.switch": info.analysis_switch,
+                        "analysis.server_url": info.analysisServer_url,
+                        "analysis.extract.fastgpt_url": info.extractFastgpt_url,
+                        "analysis.extract.fastgpt_authorization": info.extractFastgpt_authorization,
+
+                        "graphdb.switch": info.graphdb_switch,
+                        "graphdb.server_url": info.graphdbServer_url,
+                    };
+                    console.log(postData);
+                    // 发送 POST 请求到后端 API
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/write_yml', postData, headers={'Content-Type': 'application/json'});
+                    console.log('更新信息', response.data);
+                    if(response.data["status"]=="成功") {
+                        $.jBox.tip('更新成功', 'success');
+                    }
+                    // 这里可以添加更多逻辑，比如重定向到另一个页面
+                } catch (error) {
+                    $.jBox.tip('更新失败', 'error');
+                    console.error('更新失败', error);
+                }
+            };
+
+            return {
+                info,
+                handleSubmit
+            };
+        }
+    }).mount('#content');
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="utf-8">
+    <title>LLM大模型</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ai吟美管理后台">
+    <meta name="author" content="程序猿的退休生活">
+
+    <!-- The styles -->
+    <link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+
+    <link href="css/charisma-app.css" rel="stylesheet">
+    <link href='bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='css/jquery.noty.css' rel='stylesheet'>
+    <link href='css/noty_theme_default.css' rel='stylesheet'>
+    <link href='css/elfinder.min.css' rel='stylesheet'>
+    <link href='css/elfinder.theme.css' rel='stylesheet'>
+    <link href='css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href='css/uploadify.css' rel='stylesheet'>
+    <link href='css/animate.min.css' rel='stylesheet'>
+    <link href='css/extend.css' rel='stylesheet'>
+    <!-- jQuery -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <!--jbox-->
+    <link id="skin" rel="stylesheet" href="bower_components/jBox/Skins/Red/jbox.css" />
+    <script type="text/javascript" src="bower_components/jBox/jquery.jBox-2.3.min.js"></script>
+    <script type="text/javascript" src="bower_components/jBox/i18n/jquery.jBox-zh-CN.js"></script>
+    <!--vue-->
+    <script src="js/vue.3.5.13.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="config.js"></script>
+    <!-- The fav icon -->
+    <link rel="shortcut icon" href="img/favicon.ico">
+
+    <script type="text/javascript">
+        async function loadMenu() {
+            const response = await fetch('menu.html', {cache: 'force-cache'});
+            const menuHtml = await response.text();
+            document.getElementById('menu').innerHTML = menuHtml;
+        }
+
+        async function loadFooter() {
+            const response = await fetch('footer.html', {cache: 'force-cache'});
+            const footerHtml = await response.text();
+            document.getElementById('footer').innerHTML = footerHtml;
+        }
+
+        async function loadTopbar() {
+            const response = await fetch('topbar.html', {cache: 'force-cache'});
+            const topbarHtml = await response.text();
+            document.getElementById('topbar').innerHTML = topbarHtml;
+
+            // 菜单加载完成后，加载其他JavaScript文件
+            const script = document.createElement('script');
+            script.src = 'js/charisma.js';
+            document.head.appendChild(script);
+        }
+
+        // DOMContentLoaded 事件确保 DOM 已经加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+            loadTopbar();
+            loadFooter();
+        });
+    </script>
+</head>
+
+<body>
+<!-- topbar starts -->
+<div id="topbar"></div>
+<!-- topbar ends -->
+<div class="ch-container">
+    <div class="row">
+
+        <!-- left menu starts -->
+        <div id="menu"></div>
+        <!-- left menu ends -->
+
+
+        <div id="content" class="col-lg-10 col-sm-10">
+            <!-- content starts -->
+            <div>
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="llm.html">LLM大模型</a>
+                    </li>
+                </ul>
+            </div>
+
+            <form @submit.prevent="handleSubmit">
+            <div class="row">
+                <div class="box col-md-12">
+                    <div class="box-inner">
+                        <div class="box-header well" data-original-title="">
+                            <h2><i class="glyphicon glyphicon-edit"></i> LLM大模型</h2>
+
+                            <div class="box-icon">
+                                <a href="#" class="btn btn-setting btn-round btn-default"><i
+                                        class="glyphicon glyphicon-cog"></i></a>
+                                <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                                        class="glyphicon glyphicon-chevron-up"></i></a>
+                                <a href="#" class="btn btn-close btn-round btn-default"><i
+                                        class="glyphicon glyphicon-remove"></i></a>
+                            </div>
+                        </div>
+                        <div class="box-content">
+                            <br/>
+                            <span class="title">LLM选择</span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="llm.cmd">聊天模块</label>
+                                    <select id="llm.local_llm_type" data-rel="chosen" v-model="info.local_llm_type">
+                                        <option>fastgpt</option>
+                                        <option>text-generation-webui</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group position">
+                                    <label for="llm.cmd">唤醒指令</label><span class="tip" title="例子：['小爱','小甜甜']。这样用户需要在指令开头输入小爱xxx或者小甜甜xxx，才能唤醒Ai。" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input id="llm.cmd" type="text" class="form-control" placeholder="例如：小爱" v-model="info.cmd">
+                                </div>
+
+                                <div class="form-group position" style="width: 200px;">
+                                    <label for="llm.chat_version">聊天版本</label><span class="tip" title="聊天版本，自定义一个字符串名称，如果更改此名称，大模型的历史上下文会重置" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input id="llm.chat_version" type="text" class="form-control" placeholder="自定义一个版本名称" v-model="info.chat_version">
+                                </div>
+
+                                <div class="form-group position" style="width: 500px;">
+                                    <label for="llm.relations">用户关系</label><span class="tip" title="用户和Ai之间的关系，例子：{'程序猿的退休生活': '老爸','未转变者启动不了': '姐姐'}" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input id="llm.relations" type="text" class="form-control" placeholder="用户和Ai之间的关系，例如：设置父亲关系" v-model="info.relations">
+                                </div>
+                            </div>
+
+                            <span class="title">聊天基本配置</span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position" style="width: 200px;">
+                                    <label for="llm.split_flag">流式分割符</label><span class="tip" title="流式回复的分割符,例如：',|，|。|!|！|?|？|\\n'" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input id="llm.split_flag" type="text" class="form-control" placeholder="流式回复的分割符" v-model="info.split_flag">
+                                </div>
+                                <div class="form-group position" style="width: 120px;">
+                                    <label for="llm.split_limit">分割最小字符数</label>
+                                    <input id="llm.split_limit" type="text" class="form-control" placeholder="流式回复分割的最小字符数量" v-model="info.split_limit">
+                                </div>
+                                <div class="form-group position" style="width: 400px;">
+                                    <label for="llm.public_sentiment_key">舆情关键字</label><span class="tip" title="舆情关键字判断,遇到这些关键字会变成女仆性格,例如：'(爱|喵|女仆|老婆|男朋友|比心|媳妇|喜欢|乖|老公)'" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input id="llm.public_sentiment_key" type="text" class="form-control" placeholder="舆情关键字判断" v-model="info.public_sentiment_key">
+                                </div>
+                            </div>
+
+                            <span class="title">Fastgpt配置</span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="llm.fastgpt.fastgpt_url">fastgpt服务地址</label>
+                                    <input type="text" class="form-control" id="llm.fastgpt.fastgpt_url" placeholder="fastgpt服务地址" v-model="info.fastgpt_url">
+                                </div>
+                                <div class="form-group position" style="width: 500px;">
+                                    <label for="llm.fastgpt.fastgpt_authorization">fastgpt秘钥</label>
+                                    <input type="text" class="form-control" id="llm.fastgpt.fastgpt_authorization" placeholder="fastgpt秘钥" v-model="info.fastgpt_authorization">
+                                </div>
+                                <div class="form-group position" style="width: 500px;">
+                                    <label for="llm.fastgpt.dataIds">挂载知识库ID</label><span class="tip" title="fastgpt知识库动态挂载的id集合，例如：[{'datasetId':'66cd9d796f05027d00148f7b'},{'datasetId':'66cd9dee6f05027d00149297'},{'datasetId':'66cd9e196f05027d001493b4'}]" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="llm.fastgpt.dataIds" placeholder="挂载知识库ID" v-model="info.dataIds">
+                                </div>
+                            </div>
+
+                            <span class="title">text-generation-webui配置</span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="llm.text-generation-webui.tgw_url">text-generation-webui服务地址</label>
+                                    <input type="text" class="form-control" id="llm.text-generation-webui.tgw_url" placeholder="text-generation-webui服务地址" v-model="info.tgw">
+                                </div>
+                            </div>
+
+                            <div class="line">
+                                <button id="save" type="submit" class="btn btn-default" title="保存配置后不会立马生效，需要点击重启应用按钮才会生效" data-toggle="tooltip">保存配置</button>
+                                &nbsp;
+                                <button id="cancel" type="button" class="btn btn-default" @click="refreshPage">取消</button>
+                                &nbsp;
+                                <button id="restart" type="button" class="btn btn-warning" title="重启应用会重新加载配置，中途会有短暂中断" data-toggle="tooltip" @click="restart">重启应用</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/span-->
+
+            </div><!--/row-->
+            </form>
+            <!-- content ends -->
+        </div><!--/#content.col-md-0-->
+    </div><!--/fluid-row-->
+
+    <div class="modal fade" id="tipModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body">
+                    Here settings can be configured...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <!-- 底部 -->
+    <div id="footer"></div>
+    <!-- end -->
+
+</div><!--/.fluid-container-->
+
+<!-- external javascript -->
+
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- library for cookie management -->
+<script src="js/jquery.cookie.js"></script>
+<!-- calender plugin -->
+<script src='bower_components/moment/min/moment.min.js'></script>
+<script src='bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
+<!-- data table plugin -->
+<script src='js/jquery.dataTables.min.js'></script>
+
+<!-- select or dropdown enhancer -->
+<script src="bower_components/chosen/chosen.jquery.min.js"></script>
+<!-- plugin for gallery image view -->
+<script src="bower_components/colorbox/jquery.colorbox-min.js"></script>
+<!-- notification plugin -->
+<script src="js/jquery.noty.js"></script>
+<!-- library for making tables responsive -->
+<script src="bower_components/responsive-tables/responsive-tables.js"></script>
+<!-- tour plugin -->
+<script src="bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+<!-- star rating plugin -->
+<script src="js/jquery.raty.min.js"></script>
+<!-- for iOS style toggle switch -->
+<script src="js/jquery.iphone.toggle.js"></script>
+<!-- autogrowing textarea plugin -->
+<script src="js/jquery.autogrow-textarea.js"></script>
+<!-- multiple file upload plugin -->
+<script src="js/jquery.uploadify-3.1.min.js"></script>
+<!-- history.js for cross-browser state change on ajax -->
+<script src="js/jquery.history.js"></script>
+<!-- application script for Charisma demo -->
+<!--<script src="js/charisma.js"></script>-->
+
+<script>
+    const { createApp, reactive, onMounted } = Vue;
+
+    const app = createApp({
+        methods: {
+            refreshPage() {
+                location.reload();
+            },
+            async restart() {
+                axios.post(window.AppConfig.apiUrl+'/restart', {timeout: 500});
+            },
+            tipClick(event){
+                //console.log('Event Object:', event);
+                console.log('Event Target:', event.currentTarget);
+                const buttonId = event.currentTarget.getAttribute('id');
+                console.log(buttonId);
+                const buttonAlt = event.currentTarget.getAttribute('alt');
+                console.log(buttonAlt);
+                $('.modal-body').text(buttonAlt)
+                $('#tipModal').modal('show');
+            }
+        },
+        setup() {
+            const info = reactive({});
+
+            const fetchUserInfo = async () => {
+                try {
+                    const inputNames = Array.from(document.querySelectorAll('#content input')).map(input => input.id);
+                    const selectNames = Array.from(document.querySelectorAll('#content select')).map(select => select.id);
+                    if(selectNames.length>0){
+                        inputNames.push(...selectNames);
+                    }
+                    console.log(inputNames);
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/read_yml', inputNames);
+                    console.log(response.data);
+
+                    // 更新 Vue 的响应式数据
+                    Object.assign(info, {
+                        local_llm_type: response.data["llm.local_llm_type"],
+                        cmd: JSON.stringify(response.data["llm.cmd"]),
+                        chat_version: response.data["llm.chat_version"],
+                        relations: JSON.stringify(response.data["llm.relations"]),
+                        tgw: response.data["llm.text-generation-webui.tgw_url"],
+
+                        fastgpt_url: response.data["llm.fastgpt.fastgpt_url"],
+                        fastgpt_authorization: response.data["llm.fastgpt.fastgpt_authorization"],
+                        dataIds: JSON.stringify(response.data["llm.fastgpt.dataIds"]),
+
+                        split_flag: response.data["llm.split_flag"],
+                        split_limit: response.data["llm.split_limit"],
+                        public_sentiment_key: response.data["llm.public_sentiment_key"],
+                    });
+
+                } catch (error) {
+                    console.error('Failed to fetch user info:', error);
+                }
+            };
+
+            onMounted(() => {
+                fetchUserInfo();
+            });
+
+            const handleSubmit = async () => {
+                try {
+                    relations = JSON.parse($("#llm\\.relations").val());
+                    dataIds = JSON.parse($("#llm\\.fastgpt\\.dataIds").val());
+                    cmd = JSON.parse($("#llm\\.cmd").val());
+                    info.local_llm_type = $("#llm\\.local_llm_type").val()
+                    let postData = {
+                        "llm.local_llm_type": info.local_llm_type,
+                        "llm.cmd": cmd,
+                        "llm.chat_version": info.chat_version,
+                        "llm.relations": relations,
+                        "llm.text-generation-webui.tgw": info.tgw,
+                        "llm.fastgpt.fastgpt_url": info.fastgpt_url,
+                        "llm.fastgpt.fastgpt_authorization": info.fastgpt_authorization,
+                        "llm.fastgpt.dataIds": dataIds,
+                        "llm.split_flag": info.split_flag,
+                        "llm.split_limit": info.split_limit,
+                        "llm.public_sentiment_key": info.public_sentiment_key,
+                    };
+                    console.log(postData);
+                    // 发送 POST 请求到后端 API
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/write_yml', postData, headers={'Content-Type': 'application/json'});
+                    console.log('更新信息', response.data);
+                    if(response.data["status"]=="成功") {
+                        $.jBox.tip('更新成功', 'success');
+                    }
+                    // 这里可以添加更多逻辑，比如重定向到另一个页面
+                } catch (error) {
+                    $.jBox.tip('更新失败', 'error');
+                    console.error('更新失败', error);
+                }
+            };
+
+            return {
+                info,
+                handleSubmit
+            };
+        }
+    }).mount('#content');
+</script>
+
+
+</body>
+</html>

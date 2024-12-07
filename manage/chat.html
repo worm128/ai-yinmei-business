@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="utf-8">
+    <title>聊天对话</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ai吟美管理后台">
+    <meta name="author" content="程序猿的退休生活">
+
+    <!-- The styles -->
+    <link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+
+    <link href="css/charisma-app.css" rel="stylesheet">
+    <link href='bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='css/jquery.noty.css' rel='stylesheet'>
+    <link href='css/noty_theme_default.css' rel='stylesheet'>
+    <link href='css/elfinder.min.css' rel='stylesheet'>
+    <link href='css/elfinder.theme.css' rel='stylesheet'>
+    <link href='css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href='css/uploadify.css' rel='stylesheet'>
+    <link href='css/animate.min.css' rel='stylesheet'>
+    <link href='css/extend.css' rel='stylesheet'>
+    <link href='css/chat.css' rel='stylesheet'>
+    <!-- jQuery -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <!--jbox-->
+    <link id="skin" rel="stylesheet" href="bower_components/jBox/Skins/Red/jbox.css" />
+    <script type="text/javascript" src="bower_components/jBox/jquery.jBox-2.3.min.js"></script>
+    <script type="text/javascript" src="bower_components/jBox/i18n/jquery.jBox-zh-CN.js"></script>
+    <!--vue-->
+    <script src="js/vue.3.5.13.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="config.js"></script>
+    <!-- The fav icon -->
+    <link rel="shortcut icon" href="img/favicon.ico">
+
+    <script type="text/javascript">
+        async function loadMenu() {
+            const response = await fetch('menu.html', {cache: 'force-cache'});
+            const menuHtml = await response.text();
+            document.getElementById('menu').innerHTML = menuHtml;
+        }
+
+        async function loadFooter() {
+            const response = await fetch('footer.html', {cache: 'force-cache'});
+            const footerHtml = await response.text();
+            document.getElementById('footer').innerHTML = footerHtml;
+        }
+
+        async function loadTopbar() {
+            const response = await fetch('topbar.html', {cache: 'force-cache'});
+            const topbarHtml = await response.text();
+            document.getElementById('topbar').innerHTML = topbarHtml;
+
+            // 菜单加载完成后，加载其他JavaScript文件
+            const script = document.createElement('script');
+            script.src = 'js/charisma.js';
+            document.head.appendChild(script);
+        }
+
+        // DOMContentLoaded 事件确保 DOM 已经加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+            loadTopbar();
+            loadFooter();
+        });
+    </script>
+</head>
+
+<body>
+<!-- topbar starts -->
+<div id="topbar"></div>
+<!-- topbar ends -->
+<div class="ch-container">
+    <div class="row">
+
+        <!-- left menu starts -->
+        <div id="menu"></div>
+        <!-- left menu ends -->
+
+
+        <div id="content" class="col-lg-10 col-sm-10">
+            <!-- content starts -->
+            <div>
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="emote.html">聊天对话</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="row">
+                <div class="box col-md-6" style="width: 70%;float: left">
+                    <div class="box-inner">
+                        <div class="box-header well" data-original-title="">
+                            <h2><i class="glyphicon glyphicon-th"></i> 聊天对话</h2>
+
+                            <div class="box-icon">
+                                <a href="#" class="btn btn-setting btn-round btn-default"><i
+                                        class="glyphicon glyphicon-cog"></i></a>
+                                <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                                        class="glyphicon glyphicon-chevron-up"></i></a>
+                                <a href="#" class="btn btn-close btn-round btn-default"><i
+                                        class="glyphicon glyphicon-remove"></i></a>
+                            </div>
+                        </div>
+                        <div class="box-content">
+                            <div class="row">
+                                <div id="outer">
+                                    <div id="move-area">
+                                        <div id="chatArea">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="height: 20px"></div>
+                            <div class="row" style="padding-left: 30px;">
+                                <label>用户ID: <input id="uid" type="text" aria-controls="DataTables_Table_0" v-model="request.uid" style="width: 250px"></label>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <label>用户名: <input id="username" type="text" aria-controls="DataTables_Table_0" v-model="request.username" style="width: 250px"></label>
+                                <br/><br/>
+                                <label style="width: 100%;"><span style="vertical-align: top;">消息提问: </span><textarea id="msg" class="autogrow" style="width: 90%; height: 150px" v-model="request.msg"></textarea></label>
+                            </div>
+                            <div style="height: 20px"></div>
+                            <div class="row" style="margin-left: 10px;">
+                                <button id="send" type="button" class="btn btn-default" @click="send">发送</button>
+                                &nbsp;&nbsp;
+                                <button id="read" type="button" class="btn btn-default" @click="read">朗读</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box col-md-6" style="width: 30%; height: 933px;float: left">
+                    <iframe id="chatFrame" :src="iframeSrc"
+                            style="width: 100%; height: 933px; border: #949494 1px solid;">
+
+                    </iframe>
+                </div>
+            </div>
+            <!-- content ends -->
+        </div><!--/#content.col-md-0-->
+    </div><!--/fluid-row-->
+
+    <div class="modal fade" id="tipModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body">
+                    Here settings can be configured...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <!-- 底部 -->
+    <div id="footer"></div>
+    <!-- end -->
+
+</div><!--/.fluid-container-->
+
+<!-- external javascript -->
+
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- library for cookie management -->
+<script src="js/jquery.cookie.js"></script>
+<!-- calender plugin -->
+<script src='bower_components/moment/min/moment.min.js'></script>
+<script src='bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
+<!-- data table plugin -->
+<script src='js/jquery.dataTables.min.js'></script>
+
+<!-- select or dropdown enhancer -->
+<script src="bower_components/chosen/chosen.jquery.min.js"></script>
+<!-- plugin for gallery image view -->
+<script src="bower_components/colorbox/jquery.colorbox-min.js"></script>
+<!-- notification plugin -->
+<script src="js/jquery.noty.js"></script>
+<!-- library for making tables responsive -->
+<script src="bower_components/responsive-tables/responsive-tables.js"></script>
+<!-- tour plugin -->
+<script src="bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+<!-- star rating plugin -->
+<script src="js/jquery.raty.min.js"></script>
+<!-- for iOS style toggle switch -->
+<script src="js/jquery.iphone.toggle.js"></script>
+<!-- autogrowing textarea plugin -->
+<script src="js/jquery.autogrow-textarea.js"></script>
+<!-- multiple file upload plugin -->
+<script src="js/jquery.uploadify-3.1.min.js"></script>
+<!-- history.js for cross-browser state change on ajax -->
+<script src="js/jquery.history.js"></script>
+<!-- application script for Charisma demo -->
+<!--<script src="js/charisma.js"></script>-->
+
+<script>
+    function getFormattedCurrentTime() {
+        const now = new Date();
+
+        // 获取各个时间部分
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以需要加1
+        const day = String(now.getDate()).padStart(2, '0');
+
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        // 格式化为 "YYYY-MM-DD HH:mm"
+        const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+        return formattedTime;
+    }
+
+    const { createApp, reactive, onMounted, ref } = Vue;
+
+    const app = createApp({
+        methods: {
+            refreshPage() {
+                location.reload();
+            },
+            async restart() {
+                axios.post(window.AppConfig.apiUrl+'/restart');
+            },
+            //聊天
+            send() {
+                //尾部追加html
+                let div = '<div class="message right">\n' +
+                    '<div class="content">\n' +
+                    '<p>'+this.request.msg+'</p>\n' +
+                    '<div class="time right">'+getFormattedCurrentTime()+'</div>\n' +
+                    '</div>\n' +
+                    '<img src="./img/user-head.png" alt="avatar" class="avatar">\n' +
+                    '</div>';
+                $("#chatArea").append(div);
+                //聊天区域往上移动
+                $("#outer").scrollTop($("#move-area").height());
+
+                const payload = {
+                    uid: this.request.uid,
+                    username: this.request.username,
+                    msg: this.request.msg,
+                    uface: ""
+                };
+                //发起聊天
+                const response = axios.post(window.AppConfig.apiUrl+'/msg',payload, {headers:{'Content-Type': 'application/json'}});
+                console.log(response.data);
+            },
+            //朗读
+            read() {
+                const payload = this.request.msg;
+                console.log(payload);
+                const response = axios.post(window.AppConfig.apiUrl+'/say',payload, {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                });
+            },
+            tipClick(event){
+                //console.log('Event Object:', event);
+                console.log('Event Target:', event.currentTarget);
+                const buttonId = event.currentTarget.getAttribute('id');
+                const buttonAlt = event.currentTarget.getAttribute('alt');
+                $('.modal-body').text(buttonAlt)
+                $('#tipModal').modal('show');
+            }
+        },
+        setup() {
+            const info = reactive({});
+            const iframeSrc = ref([]);
+            const request = reactive({username: "程序猿的退休生活",uid: "2005675a2cfc46a89e56d78193365ff9"});
+
+            const fetchInfo = async () => {
+                try {
+                    //数据获取
+                    inputNames = ['danmaku.blivedm.ROOM_OWNER_AUTH_CODE'];
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/read_yml', inputNames);
+                    console.log(response.data);
+                    iframeSrc.value = window.AppConfig.blive+'room/'+response.data["danmaku.blivedm.ROOM_OWNER_AUTH_CODE"]+'?roomKeyType=2&showGiftName=true&showDebugMessages=true&lang=zh';
+
+                    //ws数据监听
+                    let ws = new WebSocket(window.AppConfig.ws);
+                    ws.onopen = function () {
+                        console.log("Connected!");
+                    };
+                    ws.onmessage = function (event) {
+                        console.log("Received message:", event.data);
+                        jsonstr = JSON.parse(event.data);
+                        Object.assign(info, jsonstr);
+                        //info.splice(0, info.length, ...jsonstr);
+
+                        if (info["type"] != "聊天回复")
+                            return;
+                        console.log(info);
+                        //第一个元素，新增一块聊天区域
+                        if(info["index"]==0) {
+                            let div = '<div class="message left">\n' +
+                                '<img src="./img/yinmei-head.png" alt="avatar" class="avatar">\n' +
+                                '<div class="content">\n' +
+                                '<p></p>\n' +
+                                '<div class="time left">'+getFormattedCurrentTime()+'</div>\n' +
+                                '</div>\n' +
+                                '</div>';
+                            $("#chatArea").append(div);
+                        }
+                        $(".message.left:last .content p").append(info["text"]);
+
+                        //聊天区域往上移动
+                        $("#outer").scrollTop($("#move-area").height());
+                    };
+
+                    ws.onclose = function (event) {
+                        console.log('WebSocket连接已关闭');
+                        setTimeout(reconnect, 5000);
+                    };
+
+                    function reconnect() {
+                        if (ws !== null && (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING)) {
+                            console.log("尝试重连WebSocket...");
+                            fetchInfo();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch info:', error);
+                }
+            };
+
+            onMounted(() => {
+                fetchInfo();
+            });
+
+            const handleSubmit = async () => {
+                try {
+
+                } catch (error) {
+                    $.jBox.tip('更新失败', 'error');
+                    console.error('更新失败', error);
+                }
+            };
+
+            return {
+                info,
+                request,
+                handleSubmit,
+                iframeSrc
+            };
+        }
+    }).mount('#content');
+</script>
+
+
+</body>
+</html>

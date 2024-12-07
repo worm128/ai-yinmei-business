@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="utf-8">
+    <title>搜索+搜图</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ai吟美管理后台">
+    <meta name="author" content="程序猿的退休生活">
+
+    <!-- The styles -->
+    <link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+
+    <link href="css/charisma-app.css" rel="stylesheet">
+    <link href='bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='css/jquery.noty.css' rel='stylesheet'>
+    <link href='css/noty_theme_default.css' rel='stylesheet'>
+    <link href='css/elfinder.min.css' rel='stylesheet'>
+    <link href='css/elfinder.theme.css' rel='stylesheet'>
+    <link href='css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href='css/uploadify.css' rel='stylesheet'>
+    <link href='css/animate.min.css' rel='stylesheet'>
+    <link href='css/extend.css' rel='stylesheet'>
+    <!-- jQuery -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <!--jbox-->
+    <link id="skin" rel="stylesheet" href="bower_components/jBox/Skins/Red/jbox.css" />
+    <script type="text/javascript" src="bower_components/jBox/jquery.jBox-2.3.min.js"></script>
+    <script type="text/javascript" src="bower_components/jBox/i18n/jquery.jBox-zh-CN.js"></script>
+    <!--vue-->
+    <script src="js/vue.3.5.13.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="config.js"></script>
+    <!-- The fav icon -->
+    <link rel="shortcut icon" href="img/favicon.ico">
+
+    <script type="text/javascript">
+        async function loadMenu() {
+            const response = await fetch('menu.html', {cache: 'force-cache'});
+            const menuHtml = await response.text();
+            document.getElementById('menu').innerHTML = menuHtml;
+        }
+
+        async function loadFooter() {
+            const response = await fetch('footer.html', {cache: 'force-cache'});
+            const footerHtml = await response.text();
+            document.getElementById('footer').innerHTML = footerHtml;
+        }
+
+        async function loadTopbar() {
+            const response = await fetch('topbar.html', {cache: 'force-cache'});
+            const topbarHtml = await response.text();
+            document.getElementById('topbar').innerHTML = topbarHtml;
+
+            // 菜单加载完成后，加载其他JavaScript文件
+            const script = document.createElement('script');
+            script.src = 'js/charisma.js';
+            document.head.appendChild(script);
+        }
+
+        // DOMContentLoaded 事件确保 DOM 已经加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+            loadTopbar();
+            loadFooter();
+        });
+    </script>
+</head>
+
+<body>
+<!-- topbar starts -->
+<div id="topbar"></div>
+<!-- topbar ends -->
+<div class="ch-container">
+    <div class="row">
+
+        <!-- left menu starts -->
+        <div id="menu"></div>
+        <!-- left menu ends -->
+
+
+        <div id="content" class="col-lg-10 col-sm-10">
+            <!-- content starts -->
+            <div>
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="search.html">搜索+搜图</a>
+                    </li>
+                </ul>
+            </div>
+
+            <form @submit.prevent="handleSubmit">
+            <div class="row">
+                <div class="box col-md-12">
+                    <div class="box-inner">
+                        <div class="box-header well" data-original-title="">
+                            <h2><i class="glyphicon glyphicon-edit"></i> 搜索+搜图</h2>
+
+                            <div class="box-icon">
+                                <a href="#" class="btn btn-setting btn-round btn-default"><i
+                                        class="glyphicon glyphicon-cog"></i></a>
+                                <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                                        class="glyphicon glyphicon-chevron-up"></i></a>
+                                <a href="#" class="btn btn-close btn-round btn-default"><i
+                                        class="glyphicon glyphicon-remove"></i></a>
+                            </div>
+                        </div>
+                        <div class="box-content">
+                            <br/>
+                            <span class="title">搜索</span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="searchWeb.switch">开关</label><span class="tip" data-toggle="tooltip" title="如果关闭搜索，所有搜索指令会流转到聊天对话"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input id="searchWeb.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.searchWeb_switch">
+                                </div>
+
+                                <div class="form-group position" style="width: 500px;">
+                                    <label for="searchWeb.HttpProxies">代理服务</label><span class="tip" data-toggle="tooltip" title="http代理服务，配置:{ 'http': 'socks5://127.0.0.1:10806', 'https': 'socks5://127.0.0.1:10806' }"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="searchWeb.HttpProxies" placeholder="默认配置：{ 'http': 'socks5://127.0.0.1:10806', 'https': 'socks5://127.0.0.1:10806' }" v-model="info.searchWeb_HttpProxies">
+                                </div>
+
+                                <div class="form-group position" style="width: 100px;">
+                                    <label for="searchWeb.searchNum">抽取总数</label><span class="tip" data-toggle="tooltip" title="抽文总数让LLM做一个综合理解"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="searchWeb.searchNum" placeholder="默认：5" v-model="info.searchNum">
+                                </div>
+                            </div>
+
+                            <span class="title">搜图</span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position">
+                                    <label for="searchImg.switch">开关</label><span class="tip" data-toggle="tooltip" title="如果关闭搜索，所有搜索指令会流转到聊天对话"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input id="searchImg.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.searchWeb_switch">
+                                </div>
+
+                                <div class="form-group position" style="width: 100px;">
+                                    <label for="searchImg.imageNum">抽图数量</label><span class="tip" data-toggle="tooltip" title="抽图数量，从中随机一张"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                        <input type="text" class="form-control" id="searchImg.imageNum" placeholder="抽图数量，从中随机一张" v-model="info.imageNum">
+                                </div>
+
+                                <div class="form-group position" style="width: 100px;">
+                                    <label for="searchImg.width">图片宽度</label>
+                                    <input type="text" class="form-control" id="searchImg.width" placeholder="图片宽度，默认:980" v-model="info.width">
+                                </div>
+
+                                <div class="form-group position" style="width: 100px;">
+                                    <label for="searchImg.height">图片高度</label>
+                                    <input type="text" class="form-control" id="searchImg.height" placeholder="图片高度，默认:500" v-model="info.width">
+                                </div>
+
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="searchImg.physical_save_folder">图片保存位置</label><span class="tip" data-toggle="tooltip" title="搜索图片保存的路径"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="searchImg.physical_save_folder" placeholder="填写图片保存绝对路径：J:\ai-yinmei\images\" v-model="info.physical_save_folder">
+                                </div>
+
+                                <div class="form-group position" style="width: 500px;">
+                                    <label for="searchImg.HttpProxies">代理服务</label><span class="tip" data-toggle="tooltip" title="http代理服务，配置:{ 'http': 'socks5://127.0.0.1:10806', 'https': 'socks5://127.0.0.1:10806' }"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="searchImg.HttpProxies" placeholder="默认配置：{ 'http': 'socks5://127.0.0.1:10806', 'https': 'socks5://127.0.0.1:10806' }" v-model="info.searchImg_HttpProxies">
+                                </div>
+                            </div>
+
+                            <div class="line">
+                                <button id="save" type="submit" class="btn btn-default" title="保存配置后不会立马生效，需要点击重启应用按钮才会生效" data-toggle="tooltip">保存配置</button>
+                                &nbsp;
+                                <button id="cancel" type="button" class="btn btn-default" @click="refreshPage">取消</button>
+                                &nbsp;
+                                <button id="restart" type="button" class="btn btn-warning" title="重启应用会重新加载配置，中途会有短暂中断" data-toggle="tooltip" @click="restart">重启应用</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/span-->
+
+            </div><!--/row-->
+            </form>
+            <!-- content ends -->
+        </div><!--/#content.col-md-0-->
+    </div><!--/fluid-row-->
+
+    <div class="modal fade" id="tipModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>提示</h3>
+                </div>
+                <div class="modal-body">
+                    Here settings can be configured...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <!-- 底部 -->
+    <div id="footer"></div>
+    <!-- end -->
+
+</div><!--/.fluid-container-->
+
+<!-- external javascript -->
+
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- library for cookie management -->
+<script src="js/jquery.cookie.js"></script>
+<!-- calender plugin -->
+<script src='bower_components/moment/min/moment.min.js'></script>
+<script src='bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
+<!-- data table plugin -->
+<script src='js/jquery.dataTables.min.js'></script>
+
+<!-- select or dropdown enhancer -->
+<script src="bower_components/chosen/chosen.jquery.min.js"></script>
+<!-- plugin for gallery image view -->
+<script src="bower_components/colorbox/jquery.colorbox-min.js"></script>
+<!-- notification plugin -->
+<script src="js/jquery.noty.js"></script>
+<!-- library for making tables responsive -->
+<script src="bower_components/responsive-tables/responsive-tables.js"></script>
+<!-- tour plugin -->
+<script src="bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+<!-- star rating plugin -->
+<script src="js/jquery.raty.min.js"></script>
+<!-- for iOS style toggle switch -->
+<script src="js/jquery.iphone.toggle.js"></script>
+<!-- autogrowing textarea plugin -->
+<script src="js/jquery.autogrow-textarea.js"></script>
+<!-- multiple file upload plugin -->
+<script src="js/jquery.uploadify-3.1.min.js"></script>
+<!-- history.js for cross-browser state change on ajax -->
+<script src="js/jquery.history.js"></script>
+<!-- application script for Charisma demo -->
+<!--<script src="js/charisma.js"></script>-->
+
+<script>
+    const { createApp, reactive, onMounted } = Vue;
+
+    const app = createApp({
+        methods: {
+            refreshPage() {
+                location.reload();
+            },
+            async restart() {
+                axios.post(window.AppConfig.apiUrl+'/restart', {timeout: 500});
+            },
+            tipClick(event){
+                //console.log('Event Object:', event);
+                console.log('Event Target:', event.currentTarget);
+                const buttonId = event.currentTarget.getAttribute('id');
+                console.log(buttonId);
+                const buttonAlt = event.currentTarget.getAttribute('alt');
+                console.log(buttonAlt);
+                $('.modal-body').text(buttonAlt)
+                $('#tipModal').modal('show');
+            }
+        },
+        setup() {
+            const info = reactive({});
+
+            const fetchUserInfo = async () => {
+                try {
+                    const inputNames = Array.from(document.querySelectorAll('#content input')).map(input => input.id);
+
+                    console.log(inputNames);
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/read_yml', inputNames);
+                    console.log(response.data);
+
+                    // 更新 Vue 的响应式数据
+                    Object.assign(info, {
+                        searchWeb_switch: response.data["searchWeb.switch"],
+                        HttpProxies: JSON.stringify(response.data["searchWeb.HttpProxies"]),
+                        searchNum: response.data["searchWeb.searchNum"],
+
+                        searchImg_switch: response.data["searchImg.switch"],
+                        imageNum: response.data["searchImg.imageNum"],
+                        width: response.data["searchImg.width"],
+                        height: response.data["searchImg.height"],
+                        physical_save_folder: response.data["searchImg.physical_save_folder"],
+                        HttpProxies: JSON.stringify(response.data["searchImg.HttpProxies"]),
+                    });
+
+                } catch (error) {
+                    console.error('Failed to fetch user info:', error);
+                }
+            };
+
+            onMounted(() => {
+                fetchUserInfo();
+            });
+
+            const handleSubmit = async () => {
+                try {
+                    info.searchWeb_switch = $("#searchWeb\\.switch").is(':checked');
+                    info.searchImg_switch = $("#searchImg\\.switch").is(':checked');
+                    searchWeb_HttpProxies=null
+                    if($("#searchWeb\\.HttpProxies").val()!="")
+                        searchWeb_HttpProxies = JSON.parse($("#searchWeb\\.HttpProxies").val());
+
+                    searchImg_HttpProxies=null
+                    if($("#searchImg\\.HttpProxies").val()!="")
+                        searchImg_HttpProxies = JSON.parse($("#searchImg\\.HttpProxies").val());
+
+                    let postData = {
+                        "searchWeb.switch": info.searchWeb_switch,
+                        "searchWeb.HttpProxies": searchWeb_HttpProxies,
+                        "searchWeb.searchNum": Number(info.searchNum),
+
+                        "searchImg.switch": info.searchImg_switch,
+                        "searchImg.imageNum": Number(info.imageNum),
+                        "searchImg.width": Number(info.width),
+                        "searchImg.height": Number(info.height),
+                        "searchImg.physical_save_folder": info.physical_save_folder,
+                        "searchImg.HttpProxies": searchImg_HttpProxies,
+                    };
+                    console.log(postData);
+                    // 发送 POST 请求到后端 API
+                    const response = await axios.post(window.AppConfig.apiUrl+'/oper/write_yml', postData, headers={'Content-Type': 'application/json'});
+                    console.log('更新信息', response.data);
+                    if(response.data["status"]=="成功") {
+                        $.jBox.tip('更新成功', 'success');
+                    }
+                    // 这里可以添加更多逻辑，比如重定向到另一个页面
+                } catch (error) {
+                    $.jBox.tip('更新失败', 'error');
+                    console.error('更新失败', error);
+                }
+            };
+
+            return {
+                info,
+                handleSubmit
+            };
+        }
+    }).mount('#content');
+</script>
+
+
+</body>
+</html>
