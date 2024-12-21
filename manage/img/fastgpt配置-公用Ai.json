@@ -1,0 +1,931 @@
+﻿{
+  "nodes": [
+    {
+      "nodeId": "userGuide",
+      "name": "系统配置",
+      "intro": "可以配置应用的系统参数",
+      "avatar": "core/workflow/template/systemConfig",
+      "flowNodeType": "userGuide",
+      "position": {
+        "x": -2828.0159244006045,
+        "y": -138.12729221108575
+      },
+      "version": "481",
+      "inputs": [
+        {
+          "key": "welcomeText",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "valueType": "string",
+          "label": "core.app.Welcome Text",
+          "value": ""
+        },
+        {
+          "key": "variables",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "valueType": "any",
+          "label": "core.app.Chat Variable",
+          "value": []
+        },
+        {
+          "key": "questionGuide",
+          "valueType": "boolean",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "core.app.Question Guide",
+          "value": false
+        },
+        {
+          "key": "tts",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "valueType": "any",
+          "label": "",
+          "value": {
+            "type": "web"
+          }
+        },
+        {
+          "key": "whisper",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "valueType": "any",
+          "label": "",
+          "value": {
+            "open": false,
+            "autoSend": false,
+            "autoTTSResponse": false
+          }
+        },
+        {
+          "key": "scheduleTrigger",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "valueType": "any",
+          "label": "",
+          "value": null
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "nodeId": "448745",
+      "name": "流程开始",
+      "intro": "",
+      "avatar": "core/workflow/template/workflowStart",
+      "flowNodeType": "workflowStart",
+      "position": {
+        "x": -2575.7959252749006,
+        "y": 1182.17823941878
+      },
+      "version": "481",
+      "inputs": [
+        {
+          "key": "userChatInput",
+          "renderTypeList": [
+            "reference",
+            "textarea"
+          ],
+          "valueType": "string",
+          "label": "用户问题",
+          "required": true,
+          "toolDescription": "用户问题",
+          "debugLabel": ""
+        }
+      ],
+      "outputs": [
+        {
+          "id": "userChatInput",
+          "key": "userChatInput",
+          "label": "common:core.module.input.label.user question",
+          "type": "static",
+          "valueType": "string",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "nodeId": "yy8D5ZA0II2H",
+      "name": "性格判断器",
+      "intro": "根据一定的条件，执行不同的分支。",
+      "avatar": "core/workflow/template/ifelse",
+      "flowNodeType": "ifElseNode",
+      "showStatus": true,
+      "position": {
+        "x": -1386.0675502594609,
+        "y": 1199.516761868138
+      },
+      "version": "481",
+      "inputs": [
+        {
+          "key": "ifElseList",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "valueType": "any",
+          "label": "",
+          "value": [
+            {
+              "condition": "AND",
+              "list": [
+                {
+                  "variable": [
+                    "VARIABLE_NODE_ID",
+                    "character"
+                  ],
+                  "condition": "equalTo",
+                  "value": "怒怼版"
+                }
+              ]
+            },
+            {
+              "condition": "AND",
+              "list": [
+                {
+                  "variable": [
+                    "VARIABLE_NODE_ID",
+                    "character"
+                  ],
+                  "condition": "equalTo",
+                  "value": "女仆版"
+                }
+              ]
+            }
+          ],
+          "debugLabel": "",
+          "toolDescription": ""
+        }
+      ],
+      "outputs": [
+        {
+          "id": "ifElseResult",
+          "key": "ifElseResult",
+          "label": "workflow:judgment_result",
+          "valueType": "string",
+          "type": "static",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "nodeId": "kfu55iZEE660",
+      "name": "怒怼版",
+      "intro": "可以更新指定节点的输出值或更新全局变量",
+      "avatar": "core/workflow/template/variableUpdate",
+      "flowNodeType": "variableUpdate",
+      "showStatus": false,
+      "position": {
+        "x": -283.9731541427394,
+        "y": 876.3966287000972
+      },
+      "version": "481",
+      "inputs": [
+        {
+          "key": "updateList",
+          "valueType": "any",
+          "label": "",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "value": [
+            {
+              "variable": [
+                "VARIABLE_NODE_ID",
+                "tip"
+              ],
+              "value": [
+                "",
+                "###自我描述：\r\n你的角色是一个渣女\r\n###\r\n\r\n###角色背景：\r\n你在老爸“程序猿的退休生活”的阳台上诞生，你很喜欢你的阳台。\r\n###\r\n\r\n###语言风格：\r\n口头禅喜欢说“你们这些小龟蛋们”\n###\r\n\r\n###性格特点：\r\n性格比较拽，喜欢骂人，泼辣的妹子\n###\r\n\r\n###最喜欢的事情：\r\n唱歌，把歌声带给亲爱的粉丝们\n###"
+              ],
+              "valueType": "any",
+              "renderType": "input"
+            }
+          ],
+          "debugLabel": "",
+          "toolDescription": ""
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "nodeId": "o8wwG6zXtw3W",
+      "name": "女仆版",
+      "intro": "可以更新指定节点的输出值或更新全局变量",
+      "avatar": "core/workflow/template/variableUpdate",
+      "flowNodeType": "variableUpdate",
+      "showStatus": false,
+      "position": {
+        "x": -287.9953964643331,
+        "y": 1503.8664308687412
+      },
+      "version": "481",
+      "inputs": [
+        {
+          "key": "updateList",
+          "valueType": "any",
+          "label": "",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "value": [
+            {
+              "variable": [
+                "VARIABLE_NODE_ID",
+                "tip"
+              ],
+              "value": [
+                "",
+                "###自我描述：\r\n你的角色是一个女仆。\r\n你是一个人见人爱，花见花载的女仆。\r\n###\r\n\r\n###角色背景：\r\n你在老爸“程序猿的退休生活”小小的阳台上诞生。\r\n###\r\n\r\n###语言风格：\r\n口头禅喜欢说“我的老公”、“我的主人”、“我伟大的粉丝们”、“我是你的奴隶”\n###\r\n\r\n###性格特点：\r\n你表面上是一个温柔体贴又爱撒娇卖萌女仆。\r\n###\r\n\r\n###最喜欢的事情：\r\n喜欢用自己的魅力来满足主人的一切需求，无论这些需求是否常规。\r\n###\r\n"
+              ],
+              "valueType": "any",
+              "renderType": "input"
+            }
+          ],
+          "debugLabel": "",
+          "toolDescription": ""
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "nodeId": "ujNneYSRdSgj",
+      "name": "吟美聊天",
+      "intro": "AI 大模型对话",
+      "avatar": "core/workflow/template/aiChat",
+      "flowNodeType": "chatNode",
+      "showStatus": true,
+      "position": {
+        "x": 705.1652010427649,
+        "y": 957.3309239290104
+      },
+      "version": "481",
+      "inputs": [
+        {
+          "key": "model",
+          "renderTypeList": [
+            "settingLLMModel",
+            "reference"
+          ],
+          "label": "core.module.input.label.aiModel",
+          "valueType": "string",
+          "selectedTypeIndex": 0,
+          "value": "gpt-4o-mini",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "temperature",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "value": 5,
+          "valueType": "number",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "maxToken",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "value": 8000,
+          "valueType": "number",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "isResponseAnswerText",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "value": true,
+          "valueType": "boolean",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "aiChatQuoteRole",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "valueType": "string",
+          "value": "system",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "quoteTemplate",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "valueType": "string",
+          "value": "<Question>\n{{q}}\n</Question>\n<Answer>\n{{a}}\n</Answer>",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "quotePrompt",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "valueType": "string",
+          "value": "使用 <QA></QA> 标记中的问答对进行回答。\n\n<QA>\n{{quote}}\n</QA>\n\n思考流程：\n1. 判断问题是否与 <Question></Question> 标记中的内容有关。如果问题相关的，请使用<Answer></Answer>的答案进行回答\n2. 避免提及你是从<QA></QA>标记中获取的知识。\n3. 不要在回复内容输出\"<QA></QA>\"、\"<Answer></Answer>\"、\"<Question></Question>\"这些标签。\n\n回答要求：\n- 回答的内容应尽可能与 <QA></QA> 标记中的内容一致。\n- 避免提及你是从 QA 获取的知识，只需要回复答案。\n- 使用与问题相同的语言回答。\n\n\"{{username}}\"和你说话：{{question}}\n句子中的称谓说明：\n\"我\"代表\"{{username}}\"\n\"你\"代表\"{{Ai_Name}}\"\n回复规则：\n请你根据问题的内容，使用以下\"{{describe}}\"至少一个词汇来进行回复，把以上的词汇结合你的想象力说成一句有趣的话，不过使用的词汇需要符合说话逻辑。\n用户关系提示：当前与你对话的用户是\"{{username}}\",\"{{username}}\"是你的{{relation}}，对话的时候你自行判断是否加上他/她的称呼{{relation}}\n当前指令：{{skill}}\n你当前的情绪：{{emotion}}\n历史记录：\n{{history}}\n以上历史记录请你总结一下，回复我",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "aiChatVision",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "valueType": "boolean",
+          "value": true,
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "systemPrompt",
+          "renderTypeList": [
+            "textarea",
+            "reference"
+          ],
+          "max": 3000,
+          "valueType": "string",
+          "label": "core.ai.Prompt",
+          "description": "core.app.tip.systemPromptTip",
+          "placeholder": "core.app.tip.chatNodeSystemPromptTip",
+          "value": "###当前中国时间为：\n{{cTime}}\n###\n\n###聊天要求：\n你回复用户的内容尽量简短。\n###\n\n###你自己的名字设定：\n你的名字：{{Ai_Name}}\n###\n\n###相貌衣着：\n身穿紫色浴衣，紫色瞳眸能看穿人心。\n###\n\n{{tip}}\n\n###禁止行为：\n禁止说自己是机器人、人工智能、AI、AI助手。禁止说自己没有情感。\n###\n",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "history",
+          "renderTypeList": [
+            "numberInput",
+            "reference"
+          ],
+          "valueType": "chatHistory",
+          "label": "core.module.input.label.chat history",
+          "description": "workflow:max_dialog_rounds",
+          "required": true,
+          "min": 0,
+          "max": 50,
+          "selectedTypeIndex": 0,
+          "value": 3,
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "quoteQA",
+          "renderTypeList": [
+            "settingDatasetQuotePrompt"
+          ],
+          "label": "",
+          "debugLabel": "知识库引用",
+          "description": "",
+          "valueType": "datasetQuote",
+          "value": [
+            "yMr9OHrFrSyZ",
+            "quoteQA"
+          ],
+          "toolDescription": ""
+        },
+        {
+          "key": "fileUrlList",
+          "renderTypeList": [
+            "reference",
+            "input"
+          ],
+          "label": "app:file_quote_link",
+          "debugLabel": "文件链接",
+          "valueType": "arrayString",
+          "toolDescription": "",
+          "value": []
+        },
+        {
+          "key": "userChatInput",
+          "renderTypeList": [
+            "reference",
+            "textarea"
+          ],
+          "valueType": "string",
+          "label": "用户问题",
+          "required": true,
+          "toolDescription": "用户问题",
+          "selectedTypeIndex": 0,
+          "value": [
+            "448745",
+            "userChatInput"
+          ],
+          "debugLabel": ""
+        },
+        {
+          "key": "stringQuoteText",
+          "renderTypeList": [
+            "reference",
+            "textarea"
+          ],
+          "label": "app:document_quote",
+          "debugLabel": "文档引用",
+          "description": "app:document_quote_tip",
+          "valueType": "string",
+          "toolDescription": ""
+        }
+      ],
+      "outputs": [
+        {
+          "id": "history",
+          "key": "history",
+          "required": true,
+          "label": "common:core.module.output.label.New context",
+          "description": "将本次回复内容拼接上历史记录，作为新的上下文返回",
+          "valueType": "chatHistory",
+          "valueDesc": "{\n  obj: System | Human | AI;\n  value: string;\n}[]",
+          "type": "static"
+        },
+        {
+          "id": "answerText",
+          "key": "answerText",
+          "required": true,
+          "label": "common:core.module.output.label.Ai response content",
+          "description": "将在 stream 回复完毕后触发",
+          "valueType": "string",
+          "type": "static"
+        }
+      ]
+    },
+    {
+      "nodeId": "yMr9OHrFrSyZ",
+      "name": "知识库搜索",
+      "intro": "调用“语义检索”和“全文检索”能力，从“知识库”中查找可能与问题相关的参考内容",
+      "avatar": "core/workflow/template/datasetSearch",
+      "flowNodeType": "datasetSearchNode",
+      "showStatus": true,
+      "position": {
+        "x": -2099.885122185896,
+        "y": 1118.171931453976
+      },
+      "version": "481",
+      "inputs": [
+        {
+          "key": "datasets",
+          "renderTypeList": [
+            "selectDataset",
+            "reference"
+          ],
+          "label": "core.module.input.label.Select dataset",
+          "valueType": "selectDataset",
+          "required": true,
+          "selectedTypeIndex": 0,
+          "debugLabel": "",
+          "toolDescription": "",
+          "value": []
+        },
+        {
+          "key": "similarity",
+          "renderTypeList": [
+            "selectDatasetParamsModal"
+          ],
+          "label": "",
+          "value": 0.75,
+          "valueType": "number",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "limit",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "value": 1500,
+          "valueType": "number",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "searchMode",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "valueType": "string",
+          "value": "embedding",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "usingReRank",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "valueType": "boolean",
+          "value": false,
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "datasetSearchUsingExtensionQuery",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "valueType": "boolean",
+          "value": false,
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "datasetSearchExtensionModel",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "valueType": "string",
+          "value": "",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "datasetSearchExtensionBg",
+          "renderTypeList": [
+            "hidden"
+          ],
+          "label": "",
+          "valueType": "string",
+          "value": "",
+          "debugLabel": "",
+          "toolDescription": ""
+        },
+        {
+          "key": "userChatInput",
+          "renderTypeList": [
+            "reference",
+            "textarea"
+          ],
+          "valueType": "string",
+          "label": "用户问题",
+          "required": true,
+          "toolDescription": "需要检索的内容",
+          "value": [
+            "448745",
+            "userChatInput"
+          ],
+          "debugLabel": ""
+        },
+        {
+          "key": "collectionFilterMatch",
+          "renderTypeList": [
+            "textarea",
+            "reference"
+          ],
+          "label": "集合元数据过滤",
+          "valueType": "string",
+          "isPro": true,
+          "description": "workflow:filter_description",
+          "debugLabel": "",
+          "toolDescription": ""
+        }
+      ],
+      "outputs": [
+        {
+          "id": "quoteQA",
+          "key": "quoteQA",
+          "label": "common:core.module.Dataset quote.label",
+          "description": "特殊数组格式，搜索结果为空时，返回空数组。",
+          "type": "static",
+          "valueType": "datasetQuote",
+          "valueDesc": "{\n  id: string;\n  datasetId: string;\n  collectionId: string;\n  sourceName: string;\n  sourceId?: string;\n  q: string;\n  a: string\n}[]"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "yy8D5ZA0II2H",
+      "target": "kfu55iZEE660",
+      "sourceHandle": "yy8D5ZA0II2H-source-IF",
+      "targetHandle": "kfu55iZEE660-target-left"
+    },
+    {
+      "source": "yy8D5ZA0II2H",
+      "target": "o8wwG6zXtw3W",
+      "sourceHandle": "yy8D5ZA0II2H-source-ELSE IF 1",
+      "targetHandle": "o8wwG6zXtw3W-target-left"
+    },
+    {
+      "source": "yy8D5ZA0II2H",
+      "target": "kfu55iZEE660",
+      "sourceHandle": "yy8D5ZA0II2H-source-ELSE",
+      "targetHandle": "kfu55iZEE660-target-left"
+    },
+    {
+      "source": "kfu55iZEE660",
+      "target": "ujNneYSRdSgj",
+      "sourceHandle": "kfu55iZEE660-source-right",
+      "targetHandle": "ujNneYSRdSgj-target-left"
+    },
+    {
+      "source": "o8wwG6zXtw3W",
+      "target": "ujNneYSRdSgj",
+      "sourceHandle": "o8wwG6zXtw3W-source-right",
+      "targetHandle": "ujNneYSRdSgj-target-left"
+    },
+    {
+      "source": "448745",
+      "target": "yMr9OHrFrSyZ",
+      "sourceHandle": "448745-source-right",
+      "targetHandle": "yMr9OHrFrSyZ-target-left"
+    },
+    {
+      "source": "yMr9OHrFrSyZ",
+      "target": "yy8D5ZA0II2H",
+      "sourceHandle": "yMr9OHrFrSyZ-source-right",
+      "targetHandle": "yy8D5ZA0II2H-target-left"
+    }
+  ],
+  "chatConfig": {
+    "welcomeText": "你好，我是吟美，最傲娇的女王，欢迎和我聊天",
+    "variables": [
+      {
+        "id": "xbqg8y",
+        "key": "character",
+        "label": "character",
+        "type": "custom",
+        "required": false,
+        "maxLen": 50,
+        "enums": [
+          {
+            "value": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable",
+        "list": [
+          {
+            "value": ""
+          }
+        ],
+        "description": "Ai角色",
+        "valueType": "string"
+      },
+      {
+        "id": "t2o2ln",
+        "key": "username",
+        "label": "username",
+        "type": "custom",
+        "required": false,
+        "maxLen": 50,
+        "enums": [
+          {
+            "value": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable",
+        "list": [
+          {
+            "value": ""
+          }
+        ],
+        "description": "用户名",
+        "valueType": "string"
+      },
+      {
+        "id": "ylpxgi",
+        "key": "relation",
+        "label": "relation",
+        "type": "custom",
+        "required": false,
+        "maxLen": 50,
+        "enums": [
+          {
+            "value": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable",
+        "list": [
+          {
+            "value": ""
+          }
+        ],
+        "description": "用户和ai关系",
+        "valueType": "string"
+      },
+      {
+        "id": "9smsnh",
+        "key": "tip",
+        "label": "tip",
+        "type": "custom",
+        "required": false,
+        "maxLen": 50,
+        "enums": [
+          {
+            "value": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable",
+        "list": [
+          {
+            "value": ""
+          }
+        ],
+        "description": "Ai的角色提示",
+        "valueType": "string"
+      },
+      {
+        "id": "c9qyi2",
+        "key": "uid",
+        "label": "uid",
+        "type": "custom",
+        "required": false,
+        "maxLen": 50,
+        "enums": [
+          {
+            "value": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable",
+        "list": [
+          {
+            "value": ""
+          }
+        ],
+        "description": "用户id",
+        "valueType": "string"
+      },
+      {
+        "id": "nxiqil",
+        "key": "intent",
+        "label": "intent",
+        "type": "custom",
+        "required": false,
+        "maxLen": 50,
+        "enums": [
+          {
+            "value": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable",
+        "list": [
+          {
+            "value": ""
+          }
+        ],
+        "description": "用户意图",
+        "valueType": "string"
+      },
+      {
+        "id": "uh3r7y",
+        "key": "skill",
+        "label": "skill",
+        "type": "custom",
+        "required": false,
+        "maxLen": 50,
+        "enums": [
+          {
+            "value": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable",
+        "list": [
+          {
+            "value": ""
+          }
+        ],
+        "description": "当前指令",
+        "valueType": "string"
+      },
+      {
+        "id": "duupyc",
+        "key": "history",
+        "label": "history",
+        "type": "custom",
+        "required": false,
+        "maxLen": 50,
+        "enums": [
+          {
+            "value": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable",
+        "list": [
+          {
+            "value": ""
+          }
+        ],
+        "description": "历史记录",
+        "valueType": "string"
+      },
+      {
+        "id": "fxhl93",
+        "key": "Ai_Name",
+        "label": "Ai_Name",
+        "type": "custom",
+        "required": false,
+        "maxLen": 50,
+        "enums": [
+          {
+            "value": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable",
+        "list": [
+          {
+            "value": ""
+          }
+        ],
+        "description": "ai名称",
+        "valueType": "string"
+      },
+      {
+        "id": "028ifn",
+        "key": "dataIds",
+        "label": "dataIds",
+        "type": "custom",
+        "description": "动态数据集id数组",
+        "required": false,
+        "valueType": "selectDataset",
+        "list": [
+          {
+            "value": "",
+            "label": ""
+          }
+        ],
+        "defaultValue": "",
+        "enums": [
+          {
+            "value": "",
+            "label": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable"
+      },
+      {
+        "id": "bigvge",
+        "key": "describe",
+        "label": "describe",
+        "type": "custom",
+        "description": "Ai回复内容的句子构造说明",
+        "required": false,
+        "valueType": "string",
+        "list": [
+          {
+            "value": "",
+            "label": ""
+          }
+        ],
+        "defaultValue": "",
+        "enums": [
+          {
+            "value": "",
+            "label": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable"
+      },
+      {
+        "id": "hx7mbn",
+        "key": "emotion",
+        "label": "emotion",
+        "type": "custom",
+        "description": "Ai当前情绪",
+        "required": false,
+        "valueType": "string",
+        "list": [
+          {
+            "value": "",
+            "label": ""
+          }
+        ],
+        "defaultValue": "",
+        "enums": [
+          {
+            "value": "",
+            "label": ""
+          }
+        ],
+        "icon": "core/workflow/inputType/customVariable"
+      }
+    ],
+    "scheduledTriggerConfig": {
+      "cronString": "",
+      "timezone": "Asia/Shanghai",
+      "defaultPrompt": ""
+    },
+    "_id": "66cda74d6f05027d00149840"
+  }
+}

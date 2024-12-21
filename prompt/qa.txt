@@ -1,0 +1,8 @@
+<DATA>
+    <Question>
+        {{q}}
+    </Question>
+    <Answer>
+        {{a}}
+    </Answer>
+</DATA>
