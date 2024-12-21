@@ -307,7 +307,6 @@
             const handleSubmit = async () => {
                 try {
                     info.obs_switch = $("#obs\\.switch").is(':checked');
-                    song_background = JSON.parse($("#obs\\.song_background").val());
                     info.dance_switch = $("#dance\\.switch").is(':checked');
                     info.emote_switch = $("#emote\\.switch").is(':checked');
 
@@ -316,7 +315,7 @@
                         "obs.url": info.obs_url,
                         "obs.port": Number(info.obs_port),
                         "obs.password": info.obs_password,
-                        "obs.song_background": song_background,
+                        "obs.song_background": JSON.parse(info.song_background),
 
                         "dance.switch": info.dance_switch,
                         "dance.dance_path": info.dance_path,

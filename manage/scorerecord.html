@@ -286,8 +286,8 @@
                     console.log(where);
                     // 发送 POST 请求到后端 API
                     const response = await axios.get(window.AppConfig.apiUrl+'/scorerecord?'+where, headers={'Content-Type': 'application/json'});
-                    jstr = JSON.parse(response.data["data"]);
-                    datalist.splice(0, datalist.length, ...jstr);
+                    // jstr = JSON.parse(response.data["data"]);
+                    datalist.splice(0, datalist.length, ...response.data["data"]);
                     //Object.assign(datalist,jstr);
                     console.log(datalist);
                     pg.total_pages = Number(response.data["total_pages"]);

@@ -119,14 +119,14 @@
                             <div class="line">
                                 <div class="form-group position">
                                     <label for="llm.cmd">聊天模块</label>
-                                    <select id="llm.local_llm_type" data-rel="chosen" v-model="info.local_llm_type">
-                                        <option>fastgpt</option>
-                                        <option>text-generation-webui</option>
+                                    <select id="llm.local_llm_type" data-rel="chosen" v-model="info.local_llm_type" style="width: 200px">
+                                        <option value="fastgpt">fastgpt</option>
+                                        <option value="commapi">通用聊天</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group position">
-                                    <label for="llm.cmd">唤醒指令</label><span class="tip" title="例子：['小爱','小甜甜']。这样用户需要在指令开头输入小爱xxx或者小甜甜xxx，才能唤醒Ai。" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <label for="llm.cmd">唤醒指令</label><span class="tip" title="例子：['小爱','小甜甜']。这样用户需要在指令开头输入小爱xxx或者小甜甜xxx，才能唤醒Ai。空值:['']" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
                                     <input id="llm.cmd" type="text" class="form-control" placeholder="例如：小爱" v-model="info.cmd">
                                 </div>
 
@@ -136,7 +136,7 @@
                                 </div>
 
                                 <div class="form-group position" style="width: 500px;">
-                                    <label for="llm.relations">用户关系</label><span class="tip" title="用户和Ai之间的关系，例子：{'程序猿的退休生活': '老爸','未转变者启动不了': '姐姐'}" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <label for="llm.relations">用户关系</label><span class="tip" title="用户和Ai之间的关系，例子：{'程序猿的退休生活': '老爸','未转变者启动不了': '姐姐'}。空值:{}" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
                                     <input id="llm.relations" type="text" class="form-control" placeholder="用户和Ai之间的关系，例如：设置父亲关系" v-model="info.relations">
                                 </div>
                             </div>
@@ -145,7 +145,7 @@
                             <hr>
                             <div class="line">
                                 <div class="form-group position" style="width: 200px;">
-                                    <label for="llm.split_flag">流式分割符</label><span class="tip" title="流式回复的分割符,例如：',|，|。|!|！|?|？|\\n'" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <label for="llm.split_flag">流式分割符</label><span class="tip" title="流式回复的分割符,例如：',|，|。|!|！|?|？|\n'" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
                                     <input id="llm.split_flag" type="text" class="form-control" placeholder="流式回复的分割符" v-model="info.split_flag">
                                 </div>
                                 <div class="form-group position" style="width: 120px;">
@@ -157,8 +157,14 @@
                                     <input id="llm.public_sentiment_key" type="text" class="form-control" placeholder="舆情关键字判断" v-model="info.public_sentiment_key">
                                 </div>
                             </div>
+                            <div class="line">
+                                <div class="form-group position" style="width: 800px;">
+                                    <label for="llm.extend_json">接口请求参数扩展</label><span class="tip" title="这里以json参数形式追加不同Ai接口提供商的特色参数。空值:{}" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input id="llm.extend_json" type="text" class="form-control" placeholder="这里以json参数形式追加不同Ai接口提供商的特色参数" v-model="info.extend_json">
+                                </div>
+                            </div>
 
-                            <span class="title">Fastgpt配置</span>
+                            <span class="title">Fastgpt配置&nbsp;&nbsp;&nbsp;<span>=> <a href="https://fastgpt.cn/" target="_blank">Fastgpt国内版</a> <a href="https://tryfastgpt.ai/" target="_blank">Fastgpt国际版</a> <a href="https://github.com/labring/FastGPT" target="_blank">Fastgpt本地</a> <a href="img/fastgpt配置-公用Ai.json" target="_blank">Fastgpt配置</a></span></span>
                             <hr>
                             <div class="line">
                                 <div class="form-group position" style="width: 300px;">
@@ -170,17 +176,42 @@
                                     <input type="text" class="form-control" id="llm.fastgpt.fastgpt_authorization" placeholder="fastgpt秘钥" v-model="info.fastgpt_authorization">
                                 </div>
                                 <div class="form-group position" style="width: 500px;">
-                                    <label for="llm.fastgpt.dataIds">挂载知识库ID</label><span class="tip" title="fastgpt知识库动态挂载的id集合，例如：[{'datasetId':'66cd9d796f05027d00148f7b'},{'datasetId':'66cd9dee6f05027d00149297'},{'datasetId':'66cd9e196f05027d001493b4'}]" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
-                                    <input type="text" class="form-control" id="llm.fastgpt.dataIds" placeholder="挂载知识库ID" v-model="info.dataIds">
+                                    <label for="knowledge.fastgpt.dataIds">挂载知识库ID</label><span class="tip" title="fastgpt知识库动态挂载的id集合，例如：[{'datasetId':'66cd9d796f05027d00148f7b'},{'datasetId':'66cd9dee6f05027d00149297'},{'datasetId':'66cd9e196f05027d001493b4'}]" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
+                                    <input type="text" class="form-control" id="knowledge.fastgpt.dataIds" placeholder="挂载知识库ID" v-model="info.fastgpt_dataIds">
                                 </div>
                             </div>
 
-                            <span class="title">text-generation-webui配置</span>
+
+                            <span class="title">OpenAi规范接口&nbsp;&nbsp;&nbsp;<span>=> <a href="https://www.aliyun.com/product/bailian" target="_blank">阿里百炼</a> <a href="https://open.bigmodel.cn/" target="_blank">智谱清言</a> <a href="https://github.com/songquanpeng/one-api" target="_blank">OneApi</a> <a href="https://github.com/xorbitsai/inference" target="_blank">Xinference</a></span></span>
                             <hr>
                             <div class="line">
                                 <div class="form-group position" style="width: 300px;">
-                                    <label for="llm.text-generation-webui.tgw_url">text-generation-webui服务地址</label>
-                                    <input type="text" class="form-control" id="llm.text-generation-webui.tgw_url" placeholder="text-generation-webui服务地址" v-model="info.tgw">
+                                    <label for="llm.commapi.url">接口服务地址</label>
+                                    <input type="text" class="form-control" id="llm.commapi.url" placeholder="接口服务地址" v-model="info.commapi_url">
+                                </div>
+                                <div class="form-group position" style="width: 300px;">
+                                    <label for="llm.commapi.apikey">秘钥</label>
+                                    <input type="text" class="form-control" id="llm.commapi.apikey" placeholder="秘钥" v-model="info.commapi_apikey">
+                                </div>
+                                <div class="form-group position">
+                                    <label for="llm.commapi.modelname">模型名称</label>
+                                    <input type="text" class="form-control" id="llm.commapi.modelname" placeholder="模型名称" v-model="info.commapi_modelname">
+                                </div>
+                                <div class="form-group position" style="width: 80px">
+                                    <label for="llm.commapi.history_count">历史记录</label>
+                                    <input type="text" class="form-control" id="llm.commapi.history_count" placeholder="历史记录：3" v-model="info.commapi_history_count">
+                                </div>
+                                <div class="form-group position" style="width: 80px">
+                                    <label for="llm.commapi.top_p">top_p</label>
+                                    <input type="text" class="form-control" id="llm.commapi.top_p" placeholder="top_p：0.7" v-model="info.commapi_top_p">
+                                </div>
+                                <div class="form-group position" style="width: 80px">
+                                    <label for="llm.commapi.temperature">temperature</label>
+                                    <input type="text" class="form-control" id="llm.commapi.temperature" placeholder="温度：0.9" v-model="info.commapi_temperature">
+                                </div>
+                                <div class="form-group position" style="width: 80px">
+                                    <label for="llm.commapi.max_tokens">max_tokens</label>
+                                    <input type="text" class="form-control" id="llm.commapi.max_tokens" placeholder="默认：0；0是不设置max_tokens" v-model="info.commapi_max_tokens">
                                 </div>
                             </div>
 
@@ -304,11 +335,21 @@
 
                         fastgpt_url: response.data["llm.fastgpt.fastgpt_url"],
                         fastgpt_authorization: response.data["llm.fastgpt.fastgpt_authorization"],
-                        dataIds: JSON.stringify(response.data["llm.fastgpt.dataIds"]),
+                        fastgpt_dataIds: JSON.stringify(response.data["knowledge.fastgpt.dataIds"]),
 
                         split_flag: response.data["llm.split_flag"],
                         split_limit: response.data["llm.split_limit"],
                         public_sentiment_key: response.data["llm.public_sentiment_key"],
+
+                        extend_json: JSON.stringify(response.data["llm.extend_json"]),
+
+                        commapi_url: response.data["llm.commapi.url"],
+                        commapi_apikey: response.data["llm.commapi.apikey"],
+                        commapi_modelname: response.data["llm.commapi.modelname"],
+                        commapi_history_count: response.data["llm.commapi.history_count"],
+                        commapi_top_p: response.data["llm.commapi.top_p"],
+                        commapi_temperature: response.data["llm.commapi.temperature"],
+                        commapi_max_tokens: response.data["llm.commapi.max_tokens"],
                     });
 
                 } catch (error) {
@@ -322,22 +363,28 @@
 
             const handleSubmit = async () => {
                 try {
-                    relations = JSON.parse($("#llm\\.relations").val());
-                    dataIds = JSON.parse($("#llm\\.fastgpt\\.dataIds").val());
-                    cmd = JSON.parse($("#llm\\.cmd").val());
                     info.local_llm_type = $("#llm\\.local_llm_type").val()
                     let postData = {
                         "llm.local_llm_type": info.local_llm_type,
-                        "llm.cmd": cmd,
+                        "llm.cmd": JSON.parse(info.cmd),
                         "llm.chat_version": info.chat_version,
-                        "llm.relations": relations,
+                        "llm.relations": JSON.parse(info.relations),
                         "llm.text-generation-webui.tgw": info.tgw,
                         "llm.fastgpt.fastgpt_url": info.fastgpt_url,
                         "llm.fastgpt.fastgpt_authorization": info.fastgpt_authorization,
-                        "llm.fastgpt.dataIds": dataIds,
+                        "knowledge.fastgpt.dataIds": JSON.parse(info.fastgpt_dataIds),
                         "llm.split_flag": info.split_flag,
-                        "llm.split_limit": info.split_limit,
+                        "llm.split_limit": Number(info.split_limit),
                         "llm.public_sentiment_key": info.public_sentiment_key,
+                        "llm.extend_json": JSON.parse(info.extend_json),
+
+                        "llm.commapi.url": info.commapi_url,
+                        "llm.commapi.apikey": info.commapi_apikey,
+                        "llm.commapi.modelname": info.commapi_modelname,
+                        "llm.commapi.history_count": Number(info.commapi_history_count),
+                        "llm.commapi.top_p": parseFloat(info.commapi_top_p),
+                        "llm.commapi.temperature": parseFloat(info.commapi_temperature),
+                        "llm.commapi.max_tokens": Number(info.commapi_max_tokens),
                     };
                     console.log(postData);
                     // 发送 POST 请求到后端 API

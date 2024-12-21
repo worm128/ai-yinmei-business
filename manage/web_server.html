@@ -138,9 +138,9 @@
                             <hr>
                             <div class="line">
                                 <div class="control-group">
-                                    <label class="control-label" for="app.mode">弹幕平台</label>
+                                    <label class="control-label" for="danmaku.mode">弹幕平台</label>
                                     <div class="controls">
-                                        <select id="app.mode" multiple class="form-control" data-rel="chosen" v-model="info.mode" style="width: 100%;">
+                                        <select id="danmaku.mode" multiple class="form-control" data-rel="chosen" v-model="info.mode" style="width: 100%;">
                                             <option value="blivedm">B站</option>
                                             <option value="douyin">抖音</option>
                                             <option value="youtube">Youtube</option>
@@ -162,22 +162,22 @@
 
                                 <div class="form-group position">
                                     <label for="danmaku.blivedm.ACCESS_KEY_ID">B站开放平台KeyId</label>
-                                    <input type="password" class="form-control" id="danmaku.blivedm.ACCESS_KEY_ID" placeholder="B站开放平台KeyId" v-model="info.ACCESS_KEY_ID">
+                                    <input type="text" class="form-control" id="danmaku.blivedm.ACCESS_KEY_ID" placeholder="B站开放平台KeyId" v-model="info.ACCESS_KEY_ID">
                                 </div>
 
                                 <div class="form-group position">
                                     <label for="danmaku.blivedm.ACCESS_KEY_SECRET">B站开放平台密钥</label>
-                                    <input type="password" class="form-control" id="danmaku.blivedm.ACCESS_KEY_SECRET" placeholder="B站开放平台密钥" v-model="info.ACCESS_KEY_SECRET">
+                                    <input type="text" class="form-control" id="danmaku.blivedm.ACCESS_KEY_SECRET" placeholder="B站开放平台密钥" v-model="info.ACCESS_KEY_SECRET">
                                 </div>
 
                                 <div class="form-group position">
                                     <label for="danmaku.blivedm.APP_ID">B站开放平台应用Id</label>
-                                    <input type="password" class="form-control" id="danmaku.blivedm.APP_ID" placeholder="B站开放平台密钥" v-model="info.APP_ID">
+                                    <input type="text" class="form-control" id="danmaku.blivedm.APP_ID" placeholder="B站开放平台密钥" v-model="info.APP_ID">
                                 </div>
 
                                 <div class="form-group position">
                                     <label for="danmaku.blivedm.ROOM_OWNER_AUTH_CODE">B站主播身份码</label>
-                                    <input type="password" class="form-control" id="danmaku.blivedm.ROOM_OWNER_AUTH_CODE" placeholder="B站主播身份码" v-model="info.ROOM_OWNER_AUTH_CODE">
+                                    <input type="text" class="form-control" id="danmaku.blivedm.ROOM_OWNER_AUTH_CODE" placeholder="B站主播身份码" v-model="info.ROOM_OWNER_AUTH_CODE">
                                 </div>
                             </div>
 
@@ -229,6 +229,16 @@
                                 <div class="form-group position" style="width: 400px">
                                     <label for="welcome.welcome_not_allow">此用户是否允许欢迎词</label>
                                     <input type="text" class="form-control" id="welcome.welcome_not_allow" placeholder="此用户是否允许欢迎词【用户列表】" v-model="info.welcome_not_allow">
+                                </div>
+                            </div>
+                            <div class="line">
+                                <div class="form-group position" style="width: 500px">
+                                    <label for="welcome.new_user_welcome">新用户欢迎词</label>
+                                    <input type="text" class="form-control" id="welcome.new_user_welcome" placeholder="此用户是否允许欢迎词【用户列表】" v-model="info.new_user_welcome">
+                                </div>
+                                <div class="form-group position" style="width: 500px">
+                                    <label for="welcome.old_user_welcome">旧用户欢迎词</label>
+                                    <input type="text" class="form-control" id="welcome.old_user_welcome" placeholder="此用户是否允许欢迎词【用户列表】" v-model="info.old_user_welcome">
                                 </div>
                             </div>
 
@@ -357,7 +367,7 @@
                     //info.value = response.data;
                     Object.assign(info, {
                         AiName: response.data.AiName,
-                        mode: response.data["app.mode"],
+                        mode: response.data["danmaku.mode"],
                         appwebport: Number(response.data["app.webport"]),
                         appport: Number(response.data["app.port"]),
                         blivedm_room_id: Number(response.data["danmaku.blivedm.room_id"]),
@@ -376,6 +386,8 @@
                         welcome_switch: response.data["welcome.switch"],
                         is_llm_welcome: response.data["welcome.is_llm_welcome"],
                         welcome_not_allow: JSON.stringify(response.data["welcome.welcome_not_allow"]),
+                        new_user_welcome: response.data["welcome.new_user_welcome"],
+                        old_user_welcome: response.data["welcome.old_user_welcome"],
 
                         translate_switch: response.data["translate.switch"],
                         translate_select: response.data["translate.select"],
@@ -404,7 +416,7 @@
                     info.translate_switch = $("#translate\\.switch").is(':checked');
 
                     //info.is_llm_welcome = $("#welcome\\.is_llm_welcome").val() === "false" ? false : true;
-                    info.mode = $("#app\\.mode").val();
+                    info.mode = $("#danmaku\\.mode").val();
                     welcome_not_allow=null;
                     if(info.welcome_not_allow!="")
                         welcome_not_allow = JSON.parse(info.welcome_not_allow);
@@ -427,7 +439,7 @@
                         "AiName": info.AiName,
                         "app.webport": Number(info.appwebport),
                         "app.port": Number(info.appport),
-                        "app.mode": info.mode,
+                        "danmaku.mode": info.mode,
                         "danmaku.blivedm.room_id": Number(info.blivedm_room_id),
                         "danmaku.blivedm.room_uid": Number(info.blivedm_room_uid),
                         "danmaku.blivedm.ACCESS_KEY_ID": info.ACCESS_KEY_ID,
@@ -444,6 +456,8 @@
                         "welcome.switch": info.welcome_switch,
                         "welcome.is_llm_welcome": info.is_llm_welcome,
                         "welcome.welcome_not_allow": welcome_not_allow,
+                        "welcome.new_user_welcome": info.new_user_welcome,
+                        "welcome.old_user_welcome": info.old_user_welcome,
 
                         "translate.switch": info.translate_switch,
                         "translate.select": info.translate_select,
