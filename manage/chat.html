@@ -288,7 +288,7 @@
                     inputNames = ['danmaku.blivedm.ROOM_OWNER_AUTH_CODE'];
                     const response = await axios.post(window.AppConfig.apiUrl+'/oper/read_yml', inputNames);
                     console.log(response.data);
-                    iframeSrc.value = window.AppConfig.blive+'room/'+response.data["danmaku.blivedm.ROOM_OWNER_AUTH_CODE"]+'?roomKeyType=2&showGiftName=true&showDebugMessages=true&lang=zh';
+                    iframeSrc.value = window.AppConfig.blive+'room/'+response.data["danmaku.blivedm.ROOM_OWNER_AUTH_CODE"]+'?roomKeyType=2&showGiftName=true&showDebugMessages=false&lang=zh';
 
                     //ws数据监听
                     let ws = new WebSocket(window.AppConfig.ws);

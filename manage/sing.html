@@ -128,13 +128,33 @@
                                 </div>
 
                                 <div class="form-group position" style="width: 500px;">
-                                    <label for="sing.song_not_convert">排除唱歌关键字【需正则】</label>
+                                    <label for="sing.song_not_convert">排除学歌关键字【需正则】</label>
                                     <input type="text" class="form-control" id="sing.song_not_convert" placeholder="支持正则：(三国演义\\d+|粤剧|京剧|易经)" v-model="info.song_not_convert">
                                 </div>
 
                                 <div class="form-group position" style="width: 500px;">
                                     <label for="sing.create_song_timout">超时生成歌曲</label>
                                     <input type="text" class="form-control" id="sing.create_song_timout" placeholder="默认：300，单位：秒" v-model="info.create_song_timout">
+                                </div>
+                            </div>
+
+                            <div class="line">
+                                <div class="form-group position" style="width: 440px">
+                                    <label for="sing.sing_audio_channel">人声声道</label><br>
+                                    <select id="sing.sing_audio_channel" data-rel="chosen" v-model="info.sing_audio_channel">
+                                        <option v-for="item in audio_channel_datalist" :key="item.value" :value="item.value">
+                                            {{ item.name }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group position" style="width: 440px">
+                                    <label for="sing.accompany_audio_channel">伴奏声道</label><br>
+                                    <select id="sing.accompany_audio_channel" data-rel="chosen" v-model="info.accompany_audio_channel">
+                                        <option v-for="item in audio_channel_datalist" :key="item.value" :value="item.value">
+                                            {{ item.name }}
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -236,11 +256,22 @@
         },
         setup() {
             const info = reactive({});
+            const audio_channel_datalist = reactive([]);
+
+            const fetchAudioChannel = async () => {
+                const response = await axios.get(window.AppConfig.apiUrl+'/audio_device_list');
+                console.log(response.data);
+                audio_channel_datalist.splice(0, audio_channel_datalist.length, ...response.data);
+                console.log(audio_channel_datalist);
+            }
 
             const fetchUserInfo = async () => {
                 try {
                     const inputNames = Array.from(document.querySelectorAll('#content input')).map(input => input.id);
-
+                    const selectNames = Array.from(document.querySelectorAll('#content select')).map(select => select.id);
+                    if(selectNames.length>0){
+                        inputNames.push(...selectNames);
+                    }
                     console.log(inputNames);
                     const response = await axios.post(window.AppConfig.apiUrl+'/oper/read_yml', inputNames);
                     console.log(response.data);
@@ -248,6 +279,8 @@
                     // 更新 Vue 的响应式数据
                     Object.assign(info, {
                         switch: response.data["sing.switch"],
+                        sing_audio_channel: response.data["sing.sing_audio_channel"],
+                        accompany_audio_channel: response.data["sing.accompany_audio_channel"],
                         singUrl: response.data["sing.singUrl"],
                         song_not_convert: response.data["sing.song_not_convert"],
                         create_song_timout: response.data["sing.create_song_timout"],
@@ -259,14 +292,19 @@
             };
 
             onMounted(() => {
+                fetchAudioChannel();
                 fetchUserInfo();
             });
 
             const handleSubmit = async () => {
                 try {
                     info.sing_switch = $("#sing\\.switch").is(':checked');
+                    info.sing_audio_channel = $("#sing\\.sing_audio_channel").val()
+                    info.accompany_audio_channel = $("#sing\\.accompany_audio_channel").val()
                     let postData = {
                         "sing.switch": info.sing_switch,
+                        "sing.sing_audio_channel": info.sing_audio_channel,
+                        "sing.accompany_audio_channel": info.accompany_audio_channel,
                         "sing.singUrl": info.singUrl,
                         "sing.song_not_convert": info.song_not_convert,
                         "sing.create_song_timout": Number(info.create_song_timout),
@@ -287,6 +325,7 @@
 
             return {
                 info,
+                audio_channel_datalist,
                 handleSubmit
             };
         }

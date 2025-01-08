@@ -131,6 +131,15 @@
                                     </select>
                                 </div>
 
+                                <div class="form-group position" style="width: 440px">
+                                    <label for="speech.audio_channel">声道选择</label><br>
+                                    <select id="speech.audio_channel" data-rel="chosen" v-model="info.speech_audio_channel">
+                                        <option v-for="item in audio_channel_datalist" :key="item.value" :value="item.value">
+                                            {{ item.name }}
+                                        </option>
+                                    </select>
+                                </div>
+
                                 <div class="form-group position" style="width: 120px">
                                     <label for="speech.speech_max_threads">合成线程数</label><span class="tip" title="线程数越大，需要耗费GPU资源越大，建议设置3~5" data-toggle="tooltip"><i class="glyphicon glyphicon-question-sign"></i></span>
                                     <input id="speech.speech_max_threads" type="text" class="form-control" placeholder="建议设置3~5" v-model="info.speech_max_threads">
@@ -237,6 +246,15 @@
                                             <option value="gpt-sovits">gpt-sovits v1和v2</option>
                                             <option value="edge-tts">微软edge-tts</option>
                                             <option value="bert-vists">bert-vists</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group position" style="width: 440px">
+                                        <label for="assistant.audio_channel">声道选择</label><br>
+                                        <select id="assistant.audio_channel" data-rel="chosen" v-model="info.assistant_audio_channel">
+                                            <option v-for="item in audio_channel_datalist" :key="item.value" :value="item.value">
+                                                {{ item.name }}
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -431,6 +449,14 @@
         },
         setup() {
             const info = reactive({});
+            const audio_channel_datalist = reactive([]);
+
+            const fetchAudioChannel = async () => {
+                const response = await axios.get(window.AppConfig.apiUrl+'/audio_device_list');
+                console.log(response.data);
+                audio_channel_datalist.splice(0, audio_channel_datalist.length, ...response.data);
+                console.log(audio_channel_datalist);
+            }
 
             const fetchUserInfo = async () => {
                 try {
@@ -447,6 +473,7 @@
                     Object.assign(info, {
                         speech_switch: response.data["speech.switch"],
                         speech_select: response.data["speech.select"],
+                        speech_audio_channel: response.data["speech.audio_channel"],
                         speech_max_threads: Number(response.data["speech.speech_max_threads"]),
 
                         gtp_vists_url: response.data["speech.gpt-sovits.gtp_vists_url"],
@@ -465,6 +492,7 @@
                         //助手
                         assistant_switch: response.data["assistant.switch"],
                         assistant_select: response.data["assistant.select"],
+                        assistant_audio_channel: response.data["assistant.audio_channel"],
 
                         assistant_gtp_vists_url: response.data["assistant.gpt-sovits.gtp_vists_url"],
                         assistant_gtp_vists_temperature: parseFloat(response.data["assistant.gpt-sovits.temperature"]),
@@ -486,13 +514,17 @@
             };
 
             onMounted(() => {
+                fetchAudioChannel();
                 fetchUserInfo();
             });
 
             const handleSubmit = async () => {
                 try {
                     info.speech_select = $("#speech\\.select").val()
+                    info.speech_audio_channel = $("#speech\\.audio_channel").val()
+
                     info.assistant_select = $("#assistant\\.select").val()
+                    info.assistant_audio_channel = $("#assistant\\.audio_channel").val()
 
                     info.speech_switch = $("#speech\\.switch").is(':checked');
                     info.assistant_switch = $("#assistant\\.switch").is(':checked');
@@ -501,6 +533,8 @@
                         "speech.speech_max_threads": Number(info.speech_max_threads),
                         "speech.switch": info.speech_switch,
                         "speech.select": info.speech_select,
+                        "speech.audio_channel": info.speech_audio_channel,
+
                         "speech.gpt-sovits.gtp_vists_url": info.gtp_vists_url,
                         "speech.gpt-sovits.temperature": parseFloat(info.gtp_vists_temperature),
                         "speech.gpt-sovits.speed": parseFloat(info.gtp_vists_speed),
@@ -514,6 +548,8 @@
 
                         "assistant.switch": info.assistant_switch,
                         "assistant.select": info.assistant_select,
+                        "assistant.audio_channel": info.assistant_audio_channel,
+
                         "assistant.gpt-sovits.gtp_vists_url": info.assistant_gtp_vists_url,
                         "assistant.gpt-sovits.temperature": parseFloat(info.assistant_gtp_vists_temperature),
                         "assistant.gpt-sovits.speed": parseFloat(info.assistant_gtp_vists_speed),
@@ -541,6 +577,7 @@
 
             return {
                 info,
+                audio_channel_datalist,
                 handleSubmit
             };
         }

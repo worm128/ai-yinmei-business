@@ -408,7 +408,7 @@ function getTime() {
 // JavaScript部分
 function chat(text) {
 	$.ajax({
-		url: "http://127.0.0.1:1800/chat",
+		url: "http://127.0.0.1:9888/chat",
 		type: "GET",
 		dataType: "jsonp",
 		data: {

@@ -61,6 +61,7 @@
                 },
                 setup() {
                     const info = reactive({});
+                    //$("#chat").hide();
 
                     const fetchInfo = async () => {
                         try {
@@ -80,6 +81,8 @@
                                 traceid = info["traceid"];
                                 text = info["text"];
                                 chatStatus = info["chatStatus"];
+                                //显示聊天框
+                                //$("#chat").show();
                                 text = text.replaceAll("<br/>", "\r\n");
                                 var i = 0; // 当前要显示的字符索引
                                 attrname = $('#content div.area .font').attr("class");

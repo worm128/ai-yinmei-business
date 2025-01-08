@@ -114,7 +114,7 @@
                         </div>
                         <div class="box-content">
                             <br/>
-                            <span class="title">Vtuber Studio皮肤配置<span class="tip" data-toggle="tooltip" title="连接Vtuber Studio软件的表情"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <span class="title">皮肤配置<span class="tip" data-toggle="tooltip" title="连接Vtuber Studio软件的表情"><i class="glyphicon glyphicon-question-sign"></i></span></span>
                             <hr>
                             <div class="line">
                                 <div class="form-group position">
@@ -122,6 +122,18 @@
                                     <input id="vtuber.switch" data-no-uniform="true" type="checkbox" class="iphone-toggle" v-model="info.vtuber_switch">
                                 </div>
 
+                                <div class="form-group position">
+                                    <label for="vtuber.select">皮肤选择</label><br>
+                                    <select id="vtuber.select" data-rel="chosen" v-model="info.vtuber_select">
+                                        <option value="vts">Vtube Studio</option>
+                                        <option value="desktop">桌宠</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <span class="title">Vtuber Studio配置<span class="tip" data-toggle="tooltip" title="连接Vtuber Studio软件的表情"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
                                 <div class="form-group position" style="width: 300px;">
                                     <label for="vtuber.vtuber_websocket">Vtuber websocket服务地址</label><span class="tip" data-toggle="tooltip" title="此连接是Vtuber Studio软件的ws插件服务websocket连接"><i class="glyphicon glyphicon-question-sign"></i></span>
                                     <input type="text" class="form-control" id="vtuber.vtuber_websocket" placeholder="Vtuber websocket服务地址:端口" v-model="info.vtuber_websocket">
@@ -136,8 +148,6 @@
                                     <label for="vtuber.vtuber_pluginDeveloper">账号名称</label>
                                     <input type="text" class="form-control" id="vtuber.vtuber_pluginDeveloper" placeholder="账号名称" v-model="info.vtuber_pluginDeveloper">
                                 </div>
-
-
                             </div>
                             <div class="line">
                                 <div class="form-group position" style="width: 600px;">
@@ -149,6 +159,15 @@
                                 <div class="form-group position" style="width: 600px;">
                                     <label for="vtuber.icon">插件icon[base64]</label>
                                     <input type="text" class="form-control" id="vtuber.icon" placeholder="Vtuber秘钥，注册的插件返回值里面的秘钥" v-model="info.vtuber_icon">
+                                </div>
+                            </div>
+
+                            <span class="title">桌宠配置<span class="tip" data-toggle="tooltip" title="连接Vtuber Studio软件的表情"><i class="glyphicon glyphicon-question-sign"></i></span></span>
+                            <hr>
+                            <div class="line">
+                                <div class="form-group position" style="width: 800px;">
+                                    <label>桌宠通讯端口：{{info.ws_common_port}}</label><span class="tip" data-toggle="tooltip" title="请到基础配置进行设置，可能会影响Ai回复文本、表情通讯、桌宠、积分提示、歌词等通讯接口"><i class="glyphicon glyphicon-question-sign"></i></span>
+
                                 </div>
                             </div>
 
@@ -296,6 +315,11 @@
                 try {
                     let valuesToRemove = ["vtuber.icon"];
                     const inputNames = Array.from(document.querySelectorAll('#content input')).map(input => input.id).filter(item => !valuesToRemove.includes(item));
+                    const selectNames = Array.from(document.querySelectorAll('#content select')).map(select => select.id);
+                    if(selectNames.length>0){
+                        inputNames.push(...selectNames);
+                    }
+                    inputNames.push("app.ws_common_port");
 
                     console.log(inputNames);
                     const response = await axios.post(window.AppConfig.apiUrl+'/oper/read_yml', inputNames);
@@ -304,6 +328,8 @@
                     // 更新 Vue 的响应式数据
                     Object.assign(info, {
                         vtuber_switch: response.data["vtuber.switch"],
+                        vtuber_select: response.data["vtuber.select"],
+                        ws_common_port: response.data["app.ws_common_port"],
                         vtuber_websocket: response.data["vtuber.vtuber_websocket"],
                         vtuber_pluginName: response.data["vtuber.vtuber_pluginName"],
                         vtuber_pluginDeveloper: response.data["vtuber.vtuber_pluginDeveloper"],
@@ -323,6 +349,7 @@
             const handleSubmit = async () => {
                 try {
                     info.vtuber_switch = $("#vtuber\\.switch").is(':checked');
+                    info.vtuber_select = $("#vtuber\\.select").val()
 
                     info.is_llm_welcome = $("#welcome\\.is_llm_welcome").val() === "false" ? false : true;
                     info.mode = $("#app\\.mode").val();
@@ -331,6 +358,7 @@
                     }
                     let postData = {
                         "vtuber.switch": info.vtuber_switch,
+                        "vtuber.select": info.vtuber_select,
                         "vtuber.vtuber_websocket": info.vtuber_websocket,
                         "vtuber.vtuber_pluginName": info.vtuber_pluginName,
                         "vtuber.vtuber_pluginDeveloper": info.vtuber_pluginDeveloper,
